@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Chat Interface</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+        <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    </head>
+<body>
+<!-- Modal -->
+<div class="modal" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loadingModalLabel">数据刷新中</h5>
+        </div>
+        <div class="modal-body">
+          请稍候，数据正在刷新中...
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <button id="refresh_data" class="btn btn-primary">Refresh Data</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <!-- 联系人列表 -->
+            <ul class="list-group" id="contact-list">
+                {% for user_id, info in contacts_info.items() %}
+                <li class="list-group-item contact-item" data-user-id="{{ user_id }}">
+                    {{ info[0] }} ({{ info[2] }})
+                    {% if initial_values[user_id].get('is_in_SF', 0) == 1 %}
+                        <span class="badge badge-success" style="margin-left: 10px;">已存在Leads</span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-8">
+            <div class="chat-messages" style="height: 300px; overflow-y: scroll;">
+                <!-- 聊天记录 -->
+            </div>
+            <div class="action-area">
+                <!-- 操作区，包括输入框、按钮等 -->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Status">Lead Status</label>
+                                <select class="form-control" id="Status">
+                                    <option value="">Please select</option>
+                                    {% for option in Lead_Status_dropdown %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="Student_or_Parent__c">Student or Parent</label>
+                                <select class="form-control" id="Student_or_Parent__c">
+                                    <option value="Student">Student</option>
+                                    <option value="Parent">Parent</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="LastName">Last Name</label>
+                                <input type="text" class="form-control" id="LastName">
+                            </div>
+                            <div class="form-group">
+                                <label for="Account__c">School Account</label>
+                                <select class="form-control select2" id="Account__c">
+                                    <!-- Options will be filled by JavaScript -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="Social_Media_Platform__c">Social Media Platform</label>
+                                <select class="form-control" id="Social_Media_Platform__c">
+                                    <option value="">Please select</option>
+                                    <option value="WeChat">WeChat</option>
+                                    <option value="WeCom">WeCom</option>
+                                </select>
+                            </div>
+                            <!-- WeChat Agents List 和 WeCom Agents List 预留区域 -->
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" id="WeChat_Agents_List__c_container" style="display:none;">
+                                <label for="WeChat_Agents_List__c">WeChat Agents List</label>
+                                <select class="form-control" id="WeChat_Agents_List__c">
+                                    <option value="">Please select</option>
+                                    {% for option in WeChat_Agents_dropdown %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group" id="WeCom_Agents_List__c_container" style="display:none;">
+                                <label for="WeCom_Agents_List__c">WeCom Agents List</label>
+                                <select class="form-control" id="WeCom_Agents_List__c">
+                                    <option value="">Please select</option>
+                                    {% for option in WeCom_Agents_dropdown %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="Sales_WeChat_Account__c">Sales WeChat Account</label>
+                                <select class="form-control" id="Sales_WeChat_Account__c">
+                                    <option value="">Please select</option>
+                                    {% for option in Sales_WeChat_dropdown %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="Group_Name__c">Group Name</label>
+                                <input type="text" class="form-control" id="Group_Name__c">
+                            </div>
+                            <div class="form-group">
+                                <label for="Member_First_Name__c">Member First Name</label>
+                                <input type="text" class="form-control" id="Member_First_Name__c">
+                            </div>
+                            <div class="form-group">
+                                <label for="Member_Last_Name__c">Member Last Name</label>
+                                <input type="text" class="form-control" id="Member_Last_Name__c">
+                            </div>
+                            <div class="form-group">
+                                <label for="Date_of_Birth__c">Date of Birth</label>
+                                <input type="date" class="form-control" id="Date_of_Birth__c">
+                            </div>
+                            <div class="form-group">
+                                <label for="Email">Email</label>
+                                <input type="email" class="form-control" id="Email">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="submit-action" class="btn btn-primary" disabled>Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

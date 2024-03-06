@@ -1,0 +1,28 @@
+/* styles.css */
+.chat-messages {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.sent-message {
+    background-color: #e6ffe6;
+    padding: 5px;
+    margin-bottom: 2px;
+    border-radius: 5px;
+    text-align: right;
+}
+
+.received-message {
+    background-color: #e0e0eb;
+    padding: 5px;
+    margin-bottom: 2px;
+    border-radius: 5px;
+    text-align: left;
+}
+
+.contact-item.active {
+    background-color: #007bff;
+    color: white;
+}
