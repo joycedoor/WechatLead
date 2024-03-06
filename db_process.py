@@ -242,7 +242,12 @@ def query_contacts_and_messages(MicroMsg_path, Merged_Msg_path, msg_days, contac
             FROM Contact 
             WHERE Username = ?
         """, (username,))
-        contacts_info[username] = cursor_micro_msg.fetchone()
+        contacts_info[username] = list(cursor_micro_msg.fetchone())
+        print(contacts_info[username])
+        if contacts_info[username][0] == '':
+            contacts_info[username][0] = username
+
+
         
     # 查询聊天记录
     messages = {}
