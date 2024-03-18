@@ -215,9 +215,8 @@ def merge_db(db_paths, save_path="merge.db", CreateTime: int = 0, endCreateTime:
     return save_path
 
 #操作数据库提取聊天记录部分
-def query_contacts_and_messages(MicroMsg_path, Merged_Msg_path, msg_days, contact_days):
+def query_contacts_and_messages(Merged_Msg_path, msg_days, contact_days):
     # 连接到数据库
-    conn_micro_msg = sqlite3.connect(MicroMsg_path)
     conn_merge_msg = sqlite3.connect(Merged_Msg_path)
     
     # 获取今天日期和14天前的日期
@@ -226,37 +225,28 @@ def query_contacts_and_messages(MicroMsg_path, Merged_Msg_path, msg_days, contac
     last_datetime_timestamp = int(last_datetime.timestamp())
     msg_days_ago = current_datetime - datetime.timedelta(days=int(msg_days))
     
-    # 查询24小时内联系过的人的用户名
-    cursor_micro_msg = conn_micro_msg.cursor()
+    # 查询 Contact_days 内联系过的人的用户名
+    cursor_micro_msg = conn_merge_msg.cursor()
     cursor_micro_msg.execute("""
-        SELECT Username 
-        FROM ChatInfo 
-        WHERE LastReadedCreateTime >= ? AND Username NOT LIKE '%@chatroom' AND Username Not Like '%@openim'
-    """, (last_datetime_timestamp * 1000,))  # 时间戳是毫秒级的          #排除群聊和企业微信的聊天记录
-    usernames = [row[0] for row in cursor_micro_msg.fetchall()]
+        SELECT StrTalker, Alias, Nickname, Remark
+        FROM MSG join Contact on MSG.StrTalker = Contact.UserName
+        WHERE CreateTime >= ? AND Username NOT LIKE '%@chatroom' AND Username Not Like '%@openim'
+        Group by StrTalker
+    """, (last_datetime_timestamp,))       #排除群聊和企业微信的聊天记录
+
     # 查询联系人的详细信息
     contacts_info = {}
-    for username in usernames:
-        cursor_micro_msg.execute("""
-            SELECT Alias, Nickname, Remark 
-            FROM Contact 
-            WHERE Username = ?
-        """, (username,))
-        contacts_info[username] = list(cursor_micro_msg.fetchone())
-        print(contacts_info[username])
-        if contacts_info[username][0] == '':
-            contacts_info[username][0] = username
+    for row in cursor_micro_msg.fetchall():
+        contacts_info[row[0]] = [row[1], row[2], row[3]]
+        if row[1] == '':  #当没有alia时，也就是用户从没有改过WXID
+            contacts_info[row[0]][0] = row[0]   #用原始WXID填充Alias
 
-
-        
     # 查询聊天记录
     messages = {}
-    for username in usernames:
+    for username in contacts_info.keys():
         # 获取TalkerID
         cursor_merge_msg = conn_merge_msg.cursor()
-        #cursor_merge_msg.execute("SELECT ROWID FROM Name2ID WHERE Usrname = ?", (username,))
-        #talker_id = cursor_merge_msg.fetchone()[0]
-
+        
         # 获取对应聊天记录
         cursor_merge_msg.execute("""
             SELECT StrContent, IsSender, CreateTime 
@@ -267,7 +257,6 @@ def query_contacts_and_messages(MicroMsg_path, Merged_Msg_path, msg_days, contac
         messages[username] = cursor_merge_msg.fetchall()
 
     # 关闭数据库连接
-    conn_micro_msg.close()
     conn_merge_msg.close()
 
     # 返回结果

@@ -20,11 +20,10 @@ except:
     sys.exit()
 
 #根据key解密数据库
-db_type = ["MSG"]
+db_type = ["MSG", "MicroMsg"]
 code,dbs = get_core_db(wx_path = wx_info['filePath'], db_type=db_type)
 if not code:
     _ = input("数据库路径信息获取失败，请联系管理员")
-
 try:
     for d in dbs:
         merge_real_time_db(wx_info["key"], d, "./temp_db/MSG.db", 0, 999999999999)
@@ -32,16 +31,10 @@ try:
 except Exception as e:
     print(e)
     _ = input("数据库MSG信息解密失败，请联系管理员")
-try:
-    decrypt(wx_info['key'], wx_info['filePath'] + '\\Msg\\MicroMsg.db', "./temp_db/MicroMsg.db")
-    print("数据库联系人信息解密成功")
-except Exception as e:
-    print(e)
-    _ = input("数据库联系人信息解密失败，请联系管理员")
 
 msg_days = input("即将提取聊天记录，请选择需要显示多少天前的聊天记录（请输入整数）：")
 contact_days = input("请选择需要显示多少天内的聊天对象（请输入整数）：")
-contacts_info, messages = query_contacts_and_messages("./temp_db/MicroMsg.db", "./temp_db/MSG.db", msg_days, contact_days)
+contacts_info, messages = query_contacts_and_messages("./temp_db/MSG.db", msg_days, contact_days)
 
 _ = input("即将开始salesforce登录，请回车确认，登录完成后请返回本窗口")
 
@@ -162,14 +155,8 @@ def refresh_data():
     except Exception as e:
         print(e)
         _ = input("数据库MSG信息解密失败，请联系管理员")
-    try:
-        decrypt(wx_info['key'], wx_info['filePath'] + '\\Msg\\MicroMsg.db', "./temp_db/MicroMsg.db")
-        print("数据库联系人信息解密成功")
-    except Exception as e:
-        print(e)
-        _ = input("数据库联系人信息解密失败，请联系管理员")
 
-    contacts_info, messages = query_contacts_and_messages("./temp_db/MicroMsg.db", "./temp_db/MSG.db", msg_days, contact_days)
+    contacts_info, messages = query_contacts_and_messages("./temp_db/MSG.db", msg_days, contact_days)
     initial_values = search_contact(contacts_info, sf)
     return jsonify({
             'contacts_info': contacts_info,
