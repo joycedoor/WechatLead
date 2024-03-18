@@ -46,7 +46,7 @@ $(document).ready(function() {
 
     // 从后端获取数据填充下拉框
     $.ajax({
-        url: '/get_school_names',  // 更换为您的后端URL
+        url: '/get_school_names',  
         type: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -192,12 +192,12 @@ $(document).ready(function() {
                 console.log(response);
                 if(response.status === 'success') {
                     // 添加已存在Leads的标签
-                    $('.contact-item.active').append('<span class="badge badge-success" style="margin-left: 10px;">已存在Leads</span>');
-
-                    // 清空所有表单字段，如果需要
-                    // $('input[type=text], textarea, select').val('');
+                    //$('.contact-item.active').append('<span class="badge badge-success" style="margin-left: 10px;">已存在Leads</span>');
                     
                     alert('Leads创建成功！')
+
+                    // 页面提交成功后刷新
+                    location.reload();
                 } else if (response.status === 'Failed') {
                     alert('操作失败，请重试！');
                 }

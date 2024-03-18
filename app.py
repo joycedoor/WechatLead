@@ -124,10 +124,11 @@ def submit_action():
         action_data['LastName'] = contacts_info[user_id][0]
 
     try:
-        sf.Lead.create(action_data)
+        res = sf.Lead.create(action_data)
         initial_values[user_id] = action_data
         initial_values[user_id]['is_in_SF'] = 1
         initial_values[user_id]['Account__c'] = school_text
+        initial_values[user_id]['link'] = "https://smcovered.lightning.force.com/lightning/r/Lead/%s/view"%(res.get('id'))
 
         return jsonify({'status': 'success'})
     except SalesforceExpiredSession:

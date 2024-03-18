@@ -41,7 +41,7 @@
                 <li class="list-group-item contact-item" data-user-id="{{ user_id }}">
                     {{ info[0] }} ({{ info[2] }})
                     {% if initial_values[user_id].get('is_in_SF', 0) == 1 %}
-                        <span class="badge badge-success" style="margin-left: 10px;">已存在Leads</span>
+                        <a href="{{ initial_values[user_id].get('link', '#') }}" target="_blank" class="badge badge-success" style="margin-left: 10px;">已存在Leads</a>
                     {% endif %}
                 </li>
                 {% endfor %}

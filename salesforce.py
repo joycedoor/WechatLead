@@ -76,12 +76,15 @@ def search_contact(contacts_info, sf):
     #通过wxid 查找
     for wxid, info in contacts_info.items():
         lastname = info[0]
-        result = sf.query(f"SELECT Status, Student_or_Parent__c, LastName, Account__c, Social_Media_Platform__c, \
+        result = sf.query(f"SELECT Lead_ID__c, Status, Student_or_Parent__c, LastName, Account__c, Social_Media_Platform__c, \
                             WeChat_Agents_List__c, WeCom_Agents_List__c, Sales_WeChat_Account__c, \
                             Group_Name__c, Member_First_Name__c, Member_Last_Name__c, Date_of_Birth__c, Email \
                             FROM Lead where RecordTypeId='0123j000001QWVZAA4' AND LastName = '{lastname}'")
         if result['records']:
             initial_values[wxid]["is_in_SF"] = 1
+            
+            leadid = result['records'][0]['Lead_ID__c']
+            initial_values[wxid]["link"] =  "https://smcovered.lightning.force.com/lightning/r/Lead/%s/view"%(leadid)
             # 遍历查到的记录
             for record in result['records']:
                 # 遍历记录中的每个字段
