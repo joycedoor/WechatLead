@@ -18,6 +18,7 @@ def initialize_salesforce(client_id):
     access_token, instance_url, refresh_token = get_access_token(auth_code)
     try:
         sf = Salesforce(instance_url=instance_url, session_id=access_token)
+        print('Salesforce登录成功，请等待数据处理...')
     except SalesforceAuthenticationFailed as e:
         print(e)
         _ = input('登录失败，请联系管理员')
@@ -71,29 +72,32 @@ def get_access_token(auth_code):
 
 def get_init(sf):
     d = {}
+    try:
+        result = sf.query_all(format_soql("SELECT Status FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY Status"))
+        d['Lead_Status_dropdown'] = [record['Status'] for record in result['records'] if record['Status'] is not None and record['Status'][-2:] != '_c']
 
-    result = sf.query_all(format_soql("SELECT Status FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY Status"))
-    d['Lead_Status_dropdown'] = [record['Status'] for record in result['records'] if record['Status'] is not None and record['Status'][-2:] != '_c']
+        result = sf.query("SELECT WeChat_Agents_List__c FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY WeChat_Agents_List__c")
+        d['WeChat_Agents_dropdown'] = [record['WeChat_Agents_List__c'] for record in result['records'] if record['WeChat_Agents_List__c'] and record['WeChat_Agents_List__c'][-2:] != '_c']
 
-    result = sf.query("SELECT WeChat_Agents_List__c FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY WeChat_Agents_List__c")
-    d['WeChat_Agents_dropdown'] = [record['WeChat_Agents_List__c'] for record in result['records'] if record['WeChat_Agents_List__c'] and record['WeChat_Agents_List__c'][-2:] != '_c']
+        result = sf.query("SELECT WeCom_Agents_List__c FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY WeCom_Agents_List__c")
+        d['WeCom_Agents_dropdown'] = [record['WeCom_Agents_List__c'] for record in result['records'] if record['WeCom_Agents_List__c'] and record['WeCom_Agents_List__c'][-2:] != '_c']
 
-    result = sf.query("SELECT WeCom_Agents_List__c FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY WeCom_Agents_List__c")
-    d['WeCom_Agents_dropdown'] = [record['WeCom_Agents_List__c'] for record in result['records'] if record['WeCom_Agents_List__c'] and record['WeCom_Agents_List__c'][-2:] != '_c']
+        lead_description = sf.Lead.describe()
+        d['Sales_WeChat_dropdown'] = []
 
-    lead_description = sf.Lead.describe()
-    d['Sales_WeChat_dropdown'] = []
+        for field in lead_description['fields']:
+            if field['name'] == 'Sales_WeChat_Account__c': 
+                picklist_values = field['picklistValues']
+                for picklist_value in picklist_values:
+                    d['Sales_WeChat_dropdown'].append(picklist_value['label'])
 
-    for field in lead_description['fields']:
-        if field['name'] == 'Sales_WeChat_Account__c': 
-            picklist_values = field['picklistValues']
-            for picklist_value in picklist_values:
-                d['Sales_WeChat_dropdown'].append(picklist_value['label'])
+        account = sf.query("SELECT Id, Name FROM Account Group by Id, Name")
+        d['account_dict'] = {record['Id']: record['Name'] for record in account['records']}
 
-    account = sf.query("SELECT Id, Name FROM Account Group by Id, Name")
-    d['account_dict'] = {record['Id']: record['Name'] for record in account['records']}
-
-    return d
+        print("初始化数据加载完毕，即将查询Leads")
+        return d
+    except Exception as e:
+        print(e)
 
 def search_contact(contacts_info, sf, account_dict):
     initial_values = {key: {} for key in contacts_info.keys()}
@@ -119,7 +123,13 @@ def search_contact(contacts_info, sf, account_dict):
                         # 将字段名作为键，字段值作为值，添加到initial_values[wxid]的字典中
                         initial_values[wxid][field] = record[field]
                     if field == 'Account__c':
-                        initial_values[wxid]['Account__c'] = account_dict[initial_values[wxid]['Account__c']]
+                        try:
+                            initial_values[wxid]['Account__c'] = account_dict[initial_values[wxid]['Account__c']]
+                        except:
+                            print('学校无法查找，信息如下：')
+                            print(field)
+                            print(record)
+                            print(initial_values)
         else:
             initial_values[wxid]["is_in_SF"] = 0
             
