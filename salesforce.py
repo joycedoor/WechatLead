@@ -103,7 +103,6 @@ def search_contact(contacts_info, sf, account_dict):
     initial_values = {key: {} for key in contacts_info.keys()}
 
     #通过wxid 查找
-    print(contacts_info)
     for wxid, info in contacts_info.items():
         lastname = info[0]
         result = sf.query(f"SELECT Lead_ID__c, Status, Student_or_Parent__c, LastName, Account__c, Social_Media_Platform__c, \
@@ -112,13 +111,12 @@ def search_contact(contacts_info, sf, account_dict):
                             FROM Lead where RecordTypeId='0123j000001QWVZAA4' AND LastName = '{lastname}'")
         if result['records']:
             initial_values[wxid]["is_in_SF"] = 1
-            
-            leadid = result['records'][0]['Lead_ID__c']
-            initial_values[wxid]["link"] =  "https://smcovered.lightning.force.com/lightning/r/Lead/%s/view"%(leadid)
+        
             # 遍历查到的记录
             for record in result['records']:
+                leadid = result['records'][0]['Lead_ID__c']
+                initial_values[wxid]["link"] =  "https://smcovered.lightning.force.com/lightning/r/Lead/%s/view"%(leadid)
                 # 遍历记录中的每个字段
-                print(record)
                 for field in record:
                     # 跳过attributes字段，它通常包含元数据而非实际数据
                     if field != 'attributes':
