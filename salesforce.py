@@ -123,6 +123,7 @@ def search_contact(contacts_info, sf, account_dict):
                         # 将字段名作为键，字段值作为值，添加到initial_values[wxid]的字典中
                         initial_values[wxid][field] = record[field]
                     if field == 'Account__c':
+                        print(record[field])
                         initial_values[wxid]['Account__c'] = account_dict[record[field]]
         else:
             initial_values[wxid]["is_in_SF"] = 0
