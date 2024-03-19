@@ -23,7 +23,7 @@ def decrypt_wechat_database(wx_info):
     current_datetime = datetime.datetime.now()
     last_datetime = current_datetime - datetime.timedelta(days=int(config.CONTACT_DAYS))
     last_datetime_timestamp = int(last_datetime.timestamp())
-    print(last_datetime_timestamp)
+
     db_type = ["MSG", "MicroMsg"]
     code,dbs = get_core_db(wx_path = wx_info['filePath'], db_type=db_type)
     if not code:

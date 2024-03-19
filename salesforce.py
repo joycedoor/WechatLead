@@ -103,6 +103,7 @@ def search_contact(contacts_info, sf, account_dict):
     initial_values = {key: {} for key in contacts_info.keys()}
 
     #通过wxid 查找
+    print(contacts_info)
     for wxid, info in contacts_info.items():
         lastname = info[0]
         result = sf.query(f"SELECT Lead_ID__c, Status, Student_or_Parent__c, LastName, Account__c, Social_Media_Platform__c, \
@@ -117,19 +118,14 @@ def search_contact(contacts_info, sf, account_dict):
             # 遍历查到的记录
             for record in result['records']:
                 # 遍历记录中的每个字段
+                print(record)
                 for field in record:
                     # 跳过attributes字段，它通常包含元数据而非实际数据
                     if field != 'attributes':
                         # 将字段名作为键，字段值作为值，添加到initial_values[wxid]的字典中
                         initial_values[wxid][field] = record[field]
                     if field == 'Account__c':
-                        try:
-                            initial_values[wxid]['Account__c'] = account_dict[initial_values[wxid]['Account__c']]
-                        except:
-                            print('学校无法查找，信息如下：')
-                            print(field)
-                            print(record)
-                            print(initial_values)
+                        initial_values[wxid]['Account__c'] = account_dict[initial_values[wxid]['Account__c']]
         else:
             initial_values[wxid]["is_in_SF"] = 0
             
