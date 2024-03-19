@@ -26,9 +26,6 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
 
     @app.route('/submit_action', methods=['POST'])
     def submit_action():
-        global sf
-        global initial_values
-
         data = request.get_json()  # 获取 JSON 数据
         user_id = data['user_id']
         action_data = data['action_data']
@@ -40,11 +37,10 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
         if school_text:
             query = f"SELECT Id FROM Account WHERE Name = '{school_text}'"
             try:
-                account = sf.query(query)
+                account = sf.sf.query(query)
             except SalesforceExpiredSession:
-                access_token, instance_url = refresh_access_token(refresh_token)
-                sf = Salesforce(instance_url=instance_url, session_id=access_token)
-                account = sf.query(query)
+                sf.refresh_access_token()
+                account = sf.sf.query(query)
             account_id = account['records'][0]['Id'] if account['totalSize'] > 0 else None
             if account_id is not None:
                 action_data['Account__c'] = account_id
@@ -59,7 +55,7 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
             action_data['LastName'] = contacts_info[user_id][0]
 
         try:
-            res = sf.Lead.create(action_data)
+            res = sf.sf.Lead.create(action_data)
             initial_values[user_id] = action_data
             initial_values[user_id]['is_in_SF'] = 1
             initial_values[user_id]['Account__c'] = school_text
@@ -68,9 +64,8 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
             return jsonify({'status': 'success'})
         except SalesforceExpiredSession:
             try:
-                access_token, instance_url = refresh_access_token(refresh_token)
-                sf = Salesforce(instance_url=instance_url, session_id=access_token)
-                sf.Lead.create(action_data)
+                sf.refresh_access_token()
+                sf.sf.Lead.create(action_data)
             except Exception as e:
                 print(e)
                 return jsonify({'status': 'Failed'})
@@ -81,13 +76,10 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
 
     @app.route('/refresh_data')
     def refresh_data():
-        global messages
-        global initial_values
-        global contacts_info
         decrypt_wechat_database(wx_info)
 
         contacts_info, messages = query_contacts_and_messages(config.DB_PATH, config.MSG_DAYS, config.CONTACT_DAYS)
-        initial_values = search_contact(contacts_info, sf)
+        initial_values = sf.search_contact(contacts_info, sf)
         return jsonify({
                 'contacts_info': contacts_info,
                 'messages': messages,
