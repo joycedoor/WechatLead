@@ -20,13 +20,17 @@ def initialize_wechat():
 
 def decrypt_wechat_database(wx_info):
     #根据key解密数据库
+    current_datetime = datetime.datetime.now()
+    last_datetime = current_datetime - datetime.timedelta(days=int(config.CONTACT_DAYS))
+    last_datetime_timestamp = int(last_datetime.timestamp())
+    print(last_datetime_timestamp)
     db_type = ["MSG", "MicroMsg"]
     code,dbs = get_core_db(wx_path = wx_info['filePath'], db_type=db_type)
     if not code:
         _ = input("数据库路径信息获取失败，请联系管理员")
     try:
         for d in dbs:
-            merge_real_time_db(wx_info["key"], d, config.DB_PATH, 0, 999999999999)
+            merge_real_time_db(wx_info["key"], d, config.DB_PATH, last_datetime_timestamp, 999999999999)
         print("数据库消息信息解密成功")
     except Exception as e:
         print(e)
