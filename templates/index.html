@@ -35,10 +35,15 @@
     </div>
     <div class="row">
         <div class="col-4">
+            <!-- 联系人筛选框 -->
+            <div class="filter-section">
+                <input type="checkbox" id="hide-lead-checkbox" onclick="filterContacts()">
+                <label for="hide-lead-checkbox">隐藏已存在Leads的联系人</label>
+            </div>
             <!-- 联系人列表 -->
-            <ul class="list-group" id="contact-list">
+            <ul class="list-group" id="contact-list" style="height: 600px; overflow-y: scroll;">
                 {% for user_id, info in contacts_info.items() %}
-                <li class="list-group-item contact-item" data-user-id="{{ user_id }}">
+                <li class="list-group-item contact-item {% if initial_values[user_id].get('is_in_SF', 0) == 1 %}has-lead{% endif %}" data-user-id="{{ user_id }}">
                     {{ info[0] }} ({{ info[2] }})
                     {% if initial_values[user_id].get('is_in_SF', 0) == 1 %}
                         <a href="{{ initial_values[user_id].get('link', '#') }}" target="_blank" class="badge badge-success" style="margin-left: 10px;">已存在Leads</a>

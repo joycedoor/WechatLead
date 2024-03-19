@@ -16,8 +16,26 @@ function collectActionData() {
     };
 }
 
+function filterContactsWithoutLeads() {
+    const isChecked = $('#hide-lead-checkbox').is(':checked');
+    $('.contact-item').each(function() {
+        const hasLead = $(this).find('.badge-success').length > 0;
+        if (isChecked && hasLead) {
+            $(this).hide();
+        } else {
+            $(this).show();
+        }
+    });
+}
+
 $(document).ready(function() {
 
+    // 新增筛选联系人的逻辑
+    $('#hide-lead-checkbox').change(function() {
+        filterContactsWithoutLeads();
+    });
+    filterContactsWithoutLeads();
+    
     $('#Status, #LastName, #Social_Media_Platform__c, #WeChat_Agents_List__c, #WeCom_Agents_List__c').change(function() {
         // 获取必填字段的值
         var leadStatus = $('#Status').val();
