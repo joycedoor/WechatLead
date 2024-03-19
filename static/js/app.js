@@ -191,15 +191,12 @@ $(document).ready(function() {
             success: function(response) {
                 console.log(response);
                 if(response.status === 'success') {
-                    // 添加已存在Leads的标签
-                    //$('.contact-item.active').append('<span class="badge badge-success" style="margin-left: 10px;">已存在Leads</span>');
-                    
                     alert('Leads创建成功！')
 
                     // 页面提交成功后刷新
                     location.reload();
                 } else if (response.status === 'Failed') {
-                    alert('操作失败，请重试！');
+                    alert('操作失败，请截图页面以及console内容，联系管理员处理！');
                 }
             },
             error: function() {

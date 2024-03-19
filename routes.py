@@ -50,6 +50,7 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
                 action_data['Account__c'] = account_id
             else:
                 print("没有检索到学校，请检查学校是否填写正确")
+                print(action_data)
                 return jsonify({'status': 'Failed'})
 
         LastName = action_data.get('LastName', False)

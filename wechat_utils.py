@@ -1,16 +1,9 @@
-from pywxdump import VERSION_LIST, read_info, merge_real_time_db, get_core_db, decrypt
+from pywxdump import VERSION_LIST, read_info, merge_real_time_db, get_core_db
 import sys
 import config
 from salesforce import *
-import os
-import shutil
-import hashlib
-import hmac
-from Cryptodome.Cipher import AES
 import sqlite3
-import time
 import datetime
-import re
 
 def initialize_wechat():
     wx_info = read_info(VERSION_LIST, True)[0]
