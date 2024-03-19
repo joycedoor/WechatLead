@@ -3,6 +3,21 @@ from wechat_utils import *
 from flask import Flask
 from salesforce import *
 from routes import *
+import time
+import threading
+
+def open_browser():
+    while True:
+        try:
+            # 尝试连接到 Flask 服务器
+            response = requests.get('http://127.0.0.1:5000/')
+            if response.status_code == 200:
+                # 服务器已启动且可以接受请求，打开浏览器
+                webbrowser.open_new('http://127.0.0.1:5000/')
+                break
+        except requests.exceptions.ConnectionError:
+            # 服务器尚未启动，等待一段时间后重试
+            time.sleep(1)
 
 def create_app():
     app = Flask(__name__)
@@ -30,4 +45,5 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
+    threading.Thread(target=open_browser).start()
     app.run(debug=config.DEBUG)
