@@ -3,3 +3,4 @@ sfenv.py
 __pycache__/
 temp_db/
 salesforce.ipynb
+config.py

@@ -1,9 +1,29 @@
 # 测试阶段从token获取，正式发布阶段通过浏览器获取session
-from simple_salesforce import Salesforce, format_soql
+from simple_salesforce import Salesforce, SalesforceAuthenticationFailed, format_soql
+from simple_salesforce.exceptions import SalesforceMalformedRequest, SalesforceExpiredSession
 import socket
 import requests
 import urllib
-from sfenv import *
+from config import *
+import webbrowser
+
+def initialize_salesforce(client_id):
+
+    _ = input("即将开始salesforce登录，请回车确认，登录完成后请返回本窗口")
+
+    webbrowser.open(
+        'https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id={}&redirect_uri=http%3A%2F%2Flocalhost%3A5000&scope=refresh_token%20full'.format(CLIENT_ID)
+    )
+    auth_code = get_code()
+    access_token, instance_url, refresh_token = get_access_token(auth_code)
+    try:
+        sf = Salesforce(instance_url=instance_url, session_id=access_token)
+    except SalesforceAuthenticationFailed as e:
+        print(e)
+        _ = input('登录失败，请联系管理员')
+
+    return sf, refresh_token
+
 
 def get_code():
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -50,27 +70,32 @@ def get_access_token(auth_code):
         print("Error:%s"% (response.content))
 
 def get_init(sf):
+    d = {}
 
     result = sf.query_all(format_soql("SELECT Status FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY Status"))
-    Lead_Status_dropdown = [record['Status'] for record in result['records'] if record['Status'] is not None and record['Status'][-2:] != '_c']
+    d['Lead_Status_dropdown'] = [record['Status'] for record in result['records'] if record['Status'] is not None and record['Status'][-2:] != '_c']
 
     result = sf.query("SELECT WeChat_Agents_List__c FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY WeChat_Agents_List__c")
-    WeChat_Agents_dropdown = [record['WeChat_Agents_List__c'] for record in result['records'] if record['WeChat_Agents_List__c'] and record['WeChat_Agents_List__c'][-2:] != '_c']
+    d['WeChat_Agents_dropdown'] = [record['WeChat_Agents_List__c'] for record in result['records'] if record['WeChat_Agents_List__c'] and record['WeChat_Agents_List__c'][-2:] != '_c']
 
     result = sf.query("SELECT WeCom_Agents_List__c FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY WeCom_Agents_List__c")
-    WeCom_Agents_dropdown = [record['WeCom_Agents_List__c'] for record in result['records'] if record['WeCom_Agents_List__c'] and record['WeCom_Agents_List__c'][-2:] != '_c']
+    d['WeCom_Agents_dropdown'] = [record['WeCom_Agents_List__c'] for record in result['records'] if record['WeCom_Agents_List__c'] and record['WeCom_Agents_List__c'][-2:] != '_c']
 
     lead_description = sf.Lead.describe()
-    Sales_WeChat_dropdown = []
+    d['Sales_WeChat_dropdown'] = []
 
     for field in lead_description['fields']:
         if field['name'] == 'Sales_WeChat_Account__c': 
             picklist_values = field['picklistValues']
             for picklist_value in picklist_values:
-                Sales_WeChat_dropdown.append(picklist_value['label'])
-    return Lead_Status_dropdown, WeChat_Agents_dropdown, WeCom_Agents_dropdown, Sales_WeChat_dropdown
+                d['Sales_WeChat_dropdown'].append(picklist_value['label'])
 
-def search_contact(contacts_info, sf):
+    account = sf.query("SELECT Id, Name FROM Account Group by Id, Name")
+    d['account_dict'] = {record['Id']: record['Name'] for record in account['records']}
+
+    return d
+
+def search_contact(contacts_info, sf, account_dict):
     initial_values = {key: {} for key in contacts_info.keys()}
 
     #通过wxid 查找
@@ -93,9 +118,11 @@ def search_contact(contacts_info, sf):
                     if field != 'attributes':
                         # 将字段名作为键，字段值作为值，添加到initial_values[wxid]的字典中
                         initial_values[wxid][field] = record[field]
-                        
+                    if field == 'Account__c':
+                        initial_values[wxid]['Account__c'] = account_dict[initial_values[wxid]['Account__c']]
         else:
             initial_values[wxid]["is_in_SF"] = 0
+            
     return initial_values
 
 def refresh_access_token(refresh_token):
