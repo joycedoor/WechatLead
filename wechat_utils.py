@@ -6,7 +6,7 @@ import sqlite3
 import datetime
 
 def initialize_wechat():
-    wx_info = read_info(VERSION_LIST, True)[0]
+    wx_info = read_info(VERSION_LIST, False)[0]
     try:
         if not wx_info['key']:
             _ = input("信息获取失败，请关闭程序后重试，若错误持续出现，请联系管理员")
