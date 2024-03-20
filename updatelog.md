@@ -1,3 +1,7 @@
+## Version 0.0.19 - 2024-03-20 14:05:35
+
+修复refresh button
+
 ## Version 0.0.18 - 2024-03-20 13:42:05
 
 bugfix: python在中文系统下的编码带来的问题
