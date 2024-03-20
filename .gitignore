@@ -4,3 +4,4 @@ __pycache__/
 *.db
 salesforce.ipynb
 config.py
+Loggings.txt
