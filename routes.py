@@ -79,7 +79,7 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
         decrypt_wechat_database(wx_info)
 
         contacts_info, messages = query_contacts_and_messages(config.DB_PATH, config.MSG_DAYS, config.CONTACT_DAYS)
-        initial_values = sf.search_contact(contacts_info, sf)
+        initial_values = sf.search_contact(contacts_info, sf_init['account_dict'])
         return jsonify({
                 'contacts_info': contacts_info,
                 'messages': messages,
