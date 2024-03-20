@@ -12,7 +12,8 @@ function collectActionData() {
         'Member_First_Name__c': $('#Member_First_Name__c').val(),
         'Member_Last_Name__c': $('#Member_Last_Name__c').val(),
         'Date_of_Birth__c': $('#Date_of_Birth__c').val(),
-        'Email': $('#Email').val()
+        'Email': $('#Email').val(),
+        'Note_and_Description__c': $('Note_and_Description__c').val()
     };
 }
 
@@ -28,6 +29,15 @@ function filterContactsWithoutLeads() {
     });
 }
 
+// 辅助函数，用于标记未填写的字段
+function markUnfilled(selector, isFilled) {
+    if (!isFilled) {
+        $(selector).css('border-color', 'red'); // 未填写的字段边框变红
+    } else {
+        $(selector).css('border-color', ''); // 恢复正常边框颜色
+    }
+}
+
 $(document).ready(function() {
 
     // 新增筛选联系人的逻辑
@@ -35,27 +45,6 @@ $(document).ready(function() {
         filterContactsWithoutLeads();
     });
     filterContactsWithoutLeads();
-    
-    $('#Status, #LastName, #Social_Media_Platform__c, #WeChat_Agents_List__c, #WeCom_Agents_List__c').change(function() {
-        // 获取必填字段的值
-        var leadStatus = $('#Status').val();
-        var lastName = $('#LastName').val();
-        var socialMediaPlatform = $('#Social_Media_Platform__c').val();
-        var weChatAgent = $('#WeChat_Agents_List__c').val();
-        var weComAgent = $('#WeCom_Agents_List__c').val();
-
-        // 检查必填字段是否已填写
-        var isFilled = leadStatus && lastName && socialMediaPlatform;
-        // 检查至少选择了一个Agent list
-        var isAgentSelected = weChatAgent || weComAgent;
-
-        // 如果所有条件都满足，则启用提交按钮
-        if (isFilled && isAgentSelected) {
-            $('#submit-action').removeAttr('disabled');
-        } else {
-            $('#submit-action').attr('disabled', 'disabled');
-        }
-    });
 
     $('.select2').select2({
         placeholder: 'Select a school',
@@ -198,28 +187,53 @@ $(document).ready(function() {
         
     });
 
-    $('#submit-action').click(function() {
-        var userId = $('.contact-item.active').data('user-id');
-        var actionData = collectActionData(); 
-        $.ajax({
-            url: '/submit_action',
-            type: 'POST',
-            contentType: 'application/json', // 指定发送的数据类型为 JSON
-            data: JSON.stringify({ user_id: userId, action_data: actionData }), // 将数据转换为 JSON 字符串
-            success: function(response) {
-                console.log(response);
-                if(response.status === 'success') {
-                    alert('Leads创建成功！')
-
-                    // 页面提交成功后刷新
-                    location.reload();
-                } else if (response.status === 'Failed') {
-                    alert('操作失败，请截图页面以及console内容，联系管理员处理！');
+    $('#submit-action').click(function(e) {
+        e.preventDefault(); // 阻止表单的默认提交行为
+    
+        // 获取必填字段的值
+        var leadStatus = $('#Status').val();
+        var lastName = $('#LastName').val();
+        var socialMediaPlatform = $('#Social_Media_Platform__c').val();
+        var weChatAgent = $('#WeChat_Agents_List__c').val();
+        var weComAgent = $('#WeCom_Agents_List__c').val();
+    
+        // 检查必填字段是否已填写
+        var isFilled = leadStatus && lastName && socialMediaPlatform;
+        // 检查至少选择了一个Agent list
+        var isAgentSelected = weChatAgent || weComAgent;
+    
+        // 检查所有条件是否满足
+        if (isFilled && isAgentSelected) {
+            // 所有条件都满足，发送数据
+            var userId = $('.contact-item.active').data('user-id');
+            var actionData = collectActionData();
+            $.ajax({
+                url: '/submit_action',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ user_id: userId, action_data: actionData }),
+                success: function(response) {
+                    console.log(response);
+                    if(response.status === 'success') {
+                        alert('Leads创建成功！');
+                        location.reload();
+                    } else if (response.status === 'Failed') {
+                        alert('操作失败，请截图页面以及console内容，联系管理员处理！');
+                    }
+                },
+                error: function() {
+                    console.log("Error submitting action");
                 }
-            },
-            error: function() {
-                console.log("Error submitting action");
+            });
+        } else {
+            // 条件不满足，标记必填字段
+            markUnfilled('#Status', leadStatus);
+            markUnfilled('#LastName', lastName);
+            markUnfilled('#Social_Media_Platform__c', socialMediaPlatform);
+            if (!weChatAgent && !weComAgent) { // 如果两个都未选择
+                markUnfilled('#WeChat_Agents_List__c', false);
+                markUnfilled('#WeCom_Agents_List__c', false);
             }
-        });
+        }
     });
 });

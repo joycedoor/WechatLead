@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Chat Interface</title>
+        <title>微信&SaslesForce Leads上传工具</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
@@ -13,6 +13,23 @@
         <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
+        微信&SaslesForce Leads上传工具
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+            <a class="nav-item nav-link text-primary" href="使用说明网址" target="_blank">使用说明</a>
+            <a class="nav-item nav-link text-primary" href="https://docs.google.com/spreadsheets/d/10JMObYAvwvqqQRCksJbPscA5L0kF-q7AUjW9qRIcqEI/edit?usp=sharing" target="_blank">投诉建议</a>
+            <a class="nav-item nav-link text-primary" href="https://github.com/joycedoor/WechatLead/blob/main/updatelog.md" target="_blank">更新日志</a>
+        </div>
+    </div>
+</nav>
+
 <!-- Modal -->
 <div class="modal" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -95,9 +112,6 @@
                                     <option value="WeCom">WeCom</option>
                                 </select>
                             </div>
-                            <!-- WeChat Agents List 和 WeCom Agents List 预留区域 -->
-                        </div>
-                        <div class="col-md-6">
                             <div class="form-group" id="WeChat_Agents_List__c_container" style="display:none;">
                                 <label for="WeChat_Agents_List__c">WeChat Agents List</label>
                                 <select class="form-control" id="WeChat_Agents_List__c">
@@ -116,6 +130,8 @@
                                     {% endfor %}
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="Sales_WeChat_Account__c">Sales WeChat Account</label>
                                 <select class="form-control" id="Sales_WeChat_Account__c">
@@ -147,8 +163,16 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="Notes">Notes</label>
+                                <textarea class="form-control" id="Note_and_Description__c" rows="3" placeholder="Enter notes here..."></textarea>
+                            </div>
+                        </div>
+                    </div>                    
                 </div>
-                <button id="submit-action" class="btn btn-primary" disabled>Submit</button>
+                <button id="submit-action" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </div>

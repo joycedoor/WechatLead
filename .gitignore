@@ -1,6 +1,6 @@
 note.txt
 sfenv.py
 __pycache__/
-temp_db/
+*.db
 salesforce.ipynb
 config.py
