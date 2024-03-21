@@ -16,6 +16,4 @@ if exist Loggings.txt (
     )
 )
 
-REM 将输出和错误重定向到同一文件
-python app.py >> Loggings.txt 2>&1
-pause
+python app.py

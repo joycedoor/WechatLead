@@ -4,19 +4,23 @@ import config
 from salesforce import *
 import sqlite3
 import datetime
-
+import os
 def initialize_wechat():
-    wx_info = read_info(VERSION_LIST, True)[0]
+    wx_info = read_info(VERSION_LIST, True)
     try:
-        if not wx_info['key']:
-            _ = input("信息获取失败，请关闭程序后重试，若错误持续出现，请联系管理员")
+        if len(wx_info) > 1:
             
+            for ind, wx in enumerate(wx_info):
+                print(f"[{ind}] : {wx['name']}")
+            num = int(input("存在多个微信，请输入微信号对应的数字来选择需要解析的微信: "))
+            return(wx_info[num])
+        
     except:
         print("信息获取失败，请关闭程序后重试，若错误持续出现，请联系管理员")
         input()
         sys.exit()
 
-    return wx_info  # 返回微信初始化信息
+    return wx_info[0]  # 返回微信初始化信息
 
 def decrypt_wechat_database(wx_info):
     #根据key解密数据库
@@ -29,6 +33,9 @@ def decrypt_wechat_database(wx_info):
     if not code:
         _ = input("数据库路径信息获取失败，请联系管理员")
     try:
+        #如果MSG.db已经存在，先删除掉，避免污染
+        if os.path.exists(config.DB_PATH):
+            os.remove(config.DB_PATH)
         for d in dbs:
             merge_real_time_db(wx_info["key"], d, config.DB_PATH, last_datetime_timestamp, 999999999999)
         print("数据库消息信息解密成功")
