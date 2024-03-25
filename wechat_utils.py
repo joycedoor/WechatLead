@@ -65,9 +65,13 @@ def query_contacts_and_messages(Merged_Msg_path, msg_days, contact_days):
     # 查询联系人的详细信息
     contacts_info = {}
     for row in cursor_micro_msg.fetchall():
-        contacts_info[row[0]] = [row[1], row[2], row[3]]
+        contacts_info[row[0]] = {
+            'Alias': row[1], 
+            'Nickname': row[2], 
+            'Remark': row[3]
+            }
         if row[1] == '':  #当没有alia时，也就是用户从没有改过WXID
-            contacts_info[row[0]][0] = row[0]   #用原始WXID填充Alias
+            contacts_info[row[0]]['Alias'] = row[0]   #用原始WXID填充Alias
 
     # 查询聊天记录
     messages = {}

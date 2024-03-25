@@ -1,6 +1,8 @@
 from flask import request, jsonify, render_template
 from salesforce import *
 from wechat_utils import *
+import json
+
 
 def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, refresh_token, wx_info):
     

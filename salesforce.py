@@ -105,7 +105,7 @@ class SalesforceManager:
 
         #通过wxid 查找
         for wxid, info in contacts_info.items():
-            lastname = info[0]
+            lastname = info['Alias']
             result = self.sf.query(f"SELECT Lead_ID__c, Status, Student_or_Parent__c, LastName, Account__c, Social_Media_Platform__c, \
                                 WeChat_Agents_List__c, WeCom_Agents_List__c, Sales_WeChat_Account__c, \
                                 Group_Name__c, Member_First_Name__c, Member_Last_Name__c, Date_of_Birth__c, Email, Note_and_Description__c \
@@ -113,20 +113,30 @@ class SalesforceManager:
             if result['records']:
                 initial_values[wxid]["is_in_SF"] = 1
             
-                # 遍历查到的记录
-                for record in result['records']:
-                    leadid = result['records'][0]['Lead_ID__c']
-                    initial_values[wxid]["link"] =  "https://smcovered.lightning.force.com/lightning/r/Lead/%s/view"%(leadid)
-                    # 遍历记录中的每个字段
-                    for field in record:
-                        # 跳过attributes字段，它通常包含元数据而非实际数据
-                        if field != 'attributes':
-                            # 将字段名作为键，字段值作为值，添加到initial_values[wxid]的字典中
-                            initial_values[wxid][field] = record[field]
-                        if field == 'Account__c' and record[field] is not None:
-                            initial_values[wxid]['Account__c'] = account_dict[record[field]]
+                # TODO：这里先假设默认使用第一条记录，后续需要额外处理
+                record = result['records'][0]
+                leadid = result['records'][0]['Lead_ID__c']
+                initial_values[wxid]["link"] =  "https://smcovered.lightning.force.com/lightning/r/Lead/%s/view"%(leadid)
+                # 遍历记录中的每个字段
+                for field in record:
+                    # 跳过attributes字段，它通常包含元数据而非实际数据
+                    if field != 'attributes':
+                        # 将字段名作为键，字段值作为值，添加到initial_values[wxid]的字典中
+                        initial_values[wxid][field] = record[field]
+                    if field == 'Account__c' and record[field] is not None:
+                        initial_values[wxid]['Account__c'] = account_dict[record[field]]
             else:
                 initial_values[wxid]["is_in_SF"] = 0
+
+            # 对initial values的额外处理
+            # 默认识别LastName
+            if 'LastName' not in initial_values[wxid]:
+                initial_values[wxid]['LastName'] = contacts_info[wxid]['Alias']
+
+            # 识别家长和 TODO：学校
+            initial_values[wxid]['Student_or_Parent__c'] = 'Parent' if '家长' in info['Remark'] else 'Student'
+
+
                 
         return initial_values
 

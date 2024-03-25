@@ -13,7 +13,37 @@ function collectActionData() {
         'Member_Last_Name__c': $('#Member_Last_Name__c').val(),
         'Date_of_Birth__c': $('#Date_of_Birth__c').val(),
         'Email': $('#Email').val(),
-        'Note_and_Description__c': $('Note_and_Description__c').val()
+        'Note_and_Description__c': $('#Note_and_Description__c').val()
+    };
+}
+
+function extractContent(s) {
+    var match = s.match(/\(([^)]+)\)(?!.*\()/); // 仅匹配最后一对括号内的内容
+    return match ? match[1] : '';
+}
+
+function findSchoolAbbreviation(target, schools) {
+    var foundSchool = ''; // 默认为空值
+    target = target.toLowerCase(); // 将目标文本转换为小写以进行比较
+
+    // 遍历学校列表
+    schools.forEach(school => {
+        var abbreviation = school.abbreviation.toLowerCase(); // 将缩写转换为小写
+        var regex = new RegExp('\\b' + RegExp.escape(abbreviation) + '\\b'); // 创建正则表达式
+
+        // 如果找到匹配的缩写，则设置学校的全称
+        if (regex.test(target)) {
+            foundSchool = school.schoolName;
+        }
+    });
+
+    return foundSchool;
+}
+
+// 为 RegExp 添加 escape 方法
+if (!RegExp.escape) {
+    RegExp.escape = function(s) {
+        return String(s).replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
     };
 }
 
@@ -46,9 +76,76 @@ $(document).ready(function() {
     });
     filterContactsWithoutLeads();
 
-    $('.select2').select2({
+    $('#schoolModal').on('shown.bs.modal', function () {
+        // 先清空现有的行
+        $('#addedRows').empty();
+        // 从 localStorage 中读取数据
+        var storedData = localStorage.getItem('schoolData');
+        if (storedData) {
+            var schoolData = JSON.parse(storedData);
+            schoolData.forEach(function(data) {
+                // 这里应该是您添加新行到界面的代码
+                $('#addedRows').append(
+                    '<div class="row">' +
+                    '<span class="school-name">' + data.schoolName + '</span> - ' +
+                    '<span class="school-abbreviation">' + data.abbreviation + '</span>' +
+                    '</div>'
+                );
+            });
+        }
+        $('#schoolSelect').select2({
+            placeholder: 'Select a school',
+            allowClear: true,
+            dropdownParent: $('#schoolModal') // 确保下拉列表渲染在模态框内
+        });
+    });
+
+    $('.select2').not('#schoolSelect').select2({
         placeholder: 'Select a school',
         allowClear: true
+    });
+
+    // 按钮点击显示模态框
+    $('#school_nickname').click(function() {
+        $('#schoolModal').modal('show');
+    });
+
+    // 添加行的逻辑
+    $('#addRow').click(function() {
+        var schoolName = $('#schoolSelect').val();
+        var abbreviation = $('#schoolAbbreviation').val();
+        // 检查是否已填写学校名和缩写
+        if (schoolName && abbreviation) {
+            // 添加新行到界面，同时添加类名以便于识别
+            $('#addedRows').append(
+                '<div class="row school-row">' + // 添加类名 'school-row' 用于识别这些行
+                '<span class="school-name">' + schoolName + '</span> - ' + // 添加类名 'school-name'
+                '<span class="school-abbreviation">' + abbreviation + '</span>' + // 添加类名 'school-abbreviation'
+                '</div>'
+            );
+            // 清空表单以供下次输入
+            $('#schoolAbbreviation').val('');
+        } else {
+            // 如果学校名或缩写未填写，则提醒用户
+            alert('Please fill in both the school name and abbreviation.');
+        }
+    });
+
+    // 保存更改的逻辑
+    $('#saveChanges').click(function() {
+        var schoolData = [];
+        $('.school-row').each(function() { // 改为遍历所有 '.school-row'
+            var row = $(this);
+            var schoolName = row.find('.school-name').text();
+            var abbreviation = row.find('.school-abbreviation').text();
+            schoolData.push({schoolName: schoolName, abbreviation: abbreviation});
+        });
+        if (schoolData) {
+            localStorage.setItem('schoolData', JSON.stringify(schoolData)); // 将数据保存到 localStorage
+        } else {
+            alert('没有数据需要保存！');
+        }
+        $('#schoolModal').modal('hide');
     });
 
     // 从后端获取数据填充下拉框
@@ -61,6 +158,11 @@ $(document).ready(function() {
             select.empty(); // 清空现有的选项
             data.forEach(function(name) {
                 select.append(new Option(name, name));  // 这里假设每个学校的名称都是唯一的
+            });
+            var select = $('#schoolSelect');
+            select.empty(); // 清空现有的选项
+            data.forEach(function(name) {
+                select.append(new Option(name, name));
             });
         }
     });
@@ -75,7 +177,7 @@ $(document).ready(function() {
             $.each(data.contacts_info, function(index, contact) {
                 $('#contact-list').append(
                     `<li class="list-group-item contact-item" data-user-id="${index}">
-                        ${contact[0]} (${contact[2]})
+                        ${contact['Alias']} (${contact['Remark']})
                         ${data.initial_values[index] && data.initial_values[index]['is_in_SF'] == 1 ? '<span class="badge badge-success" style="margin-left: 10px;">已存在Leads</span>' : ''}
                     </li>`
                 );
@@ -83,11 +185,11 @@ $(document).ready(function() {
     
             // 隐藏模态框
             $('#loadingModal').modal('hide');
-            alert('Refresh data fetched!');
+            alert('数据刷新成功！');
         }).fail(function() {
             // 如果请求失败，也关闭模态框，并通知用户
             $('#loadingModal').modal('hide');
-            alert('Error fetching data');
+            alert('获取数据失败，请联系管理员');
         });
     });
 
@@ -159,9 +261,26 @@ $(document).ready(function() {
             });
 
             // 如果没有对应的用户数据，隐藏所有条件性显示的字段
-            if(!userValues) {
+            if(!userValues["Social_Media_Platform__c"]) {
                 $('#WeChat_Agents_List__c_container').hide();
                 $('#WeCom_Agents_List__c_container').hide();
+            }
+
+            //处理学校
+            if (!userValues["Account__c"]){
+                var selfContent = extractContent(self.innerHTML); // 提取括号内的内容
+                // 从 localStorage 中获取学校数据
+                console.log(selfContent);
+                var storedSchoolData = localStorage.getItem('schoolData');
+                var schools = storedSchoolData ? JSON.parse(storedSchoolData) : [];
+                console.log(schools);
+                var schoolFullName = findSchoolAbbreviation(selfContent, schools);
+                console.log(schoolFullName);
+                $('#Account__c').val(schoolFullName).trigger('change');
+                if(!schoolFullName) {
+                    // 如果没有值，则重置Select2以显示占位符
+                    $('#Account__c').val(null).trigger('change');
+                }
             }
 
             // 发送 AJAX 请求获取聊天记录

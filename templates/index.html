@@ -44,10 +44,52 @@
     </div>
 </div>
 
+<!-- 弹窗模态框 -->
+<div class="modal fade" id="schoolModal" tabindex="-1" aria-labelledby="schoolModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="schoolModalLabel">设置学校缩写</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- 表单放在这里 -->
+          <form id="schoolForm">
+            <div class="form-group">
+              <label for="schoolSelect">选择学校</label>
+              <select class="form-control select2" id="schoolSelect">
+                <!-- Options will be filled by JavaScript -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="schoolAbbreviation">学校缩写</label>
+              <input type="text" class="form-control" id="schoolAbbreviation">
+            </div>
+            <button type="button" id="addRow" class="btn btn-primary">添加行</button>
+          </form>
+          <!-- 动态添加的行将被放在这里 -->
+          <div id="addedRows"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary" id="saveChanges">保存更改</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <button id="refresh_data" class="btn btn-primary">Refresh Data</button>
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="First group">
+                    <button type="button" id="refresh_data" class="btn btn-secondary btn-sm mr-2">Refresh Data</button>
+                    <button type="button" id="school_nickname" class="btn btn-secondary btn-sm">设置学校缩写</button>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -61,7 +103,7 @@
             <ul class="list-group" id="contact-list" style="height: 600px; overflow-y: scroll;">
                 {% for user_id, info in contacts_info.items() %}
                 <li class="list-group-item contact-item {% if initial_values[user_id].get('is_in_SF', 0) == 1 %}has-lead{% endif %}" data-user-id="{{ user_id }}">
-                    {{ info[0] }} ({{ info[2] }})
+                    {{ info['Alias'] }} ({{ info['Remark'] }})
                     {% if initial_values[user_id].get('is_in_SF', 0) == 1 %}
                         <a href="{{ initial_values[user_id].get('link', '#') }}" target="_blank" class="badge badge-success" style="margin-left: 10px;">已存在Leads</a>
                     {% endif %}

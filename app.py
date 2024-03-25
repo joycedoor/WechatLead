@@ -37,11 +37,7 @@ def create_app():
 
     initial_values = sf.search_contact(contacts_info, sf_init['account_dict'])
 
-    # TODO: 将以下内容整合到一个处理initial_values的函数里，并且需要方便后续维护，添加诸如chatgpt之类的功能
-    for k, v in initial_values.items():
-        # LastName可以预先更新到initial_values里
-        if 'LastName' not in initial_values[k]:
-            initial_values[k]['LastName'] = contacts_info[k][0]
+    # TODO: 处理initial_values的函数，并且需要方便后续维护，添加诸如chatgpt之类的功能
 
     configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, sf.refresh_token, wx_info)
 
