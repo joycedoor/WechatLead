@@ -51,7 +51,8 @@ function filterContactsWithoutLeads() {
     const isChecked = $('#hide-lead-checkbox').is(':checked');
     $('.contact-item').each(function() {
         const hasLead = $(this).find('.badge-success').length > 0;
-        if (isChecked && hasLead) {
+        const iswl = $(this).find('.badge-white').length > 0;
+        if (isChecked && (hasLead || iswl)) {
             $(this).hide();
         } else {
             $(this).show();
@@ -105,9 +106,50 @@ $(document).ready(function() {
         allowClear: true
     });
 
-    // 按钮点击显示模态框
+    // 添加学校缩写点击显示模态框
     $('#school_nickname').click(function() {
         $('#schoolModal').modal('show');
+    });
+
+    // 添加白名单点击显示模态框
+    $('#add_to_whitelist').click(function() {
+        if ($('.contact-item.active').length > 0) {
+            $('#whitelistModal').modal('show');
+        } else {
+            alert('请先选择一个联系人！');
+        }
+    });
+    // 添加白名单按钮的确认事件
+    $('#confirmAddToWhitelist').click(function() {
+        var userId = $('.contact-item.active').data('user-id');
+        if (userId) {
+            var whitelist = localStorage.getItem('whitelist') ? JSON.parse(localStorage.getItem('whitelist')) : [];
+            if (!whitelist.includes(userId)) {
+                whitelist.push(userId);
+                localStorage.setItem('whitelist', JSON.stringify(whitelist));
+                $('.contact-item.active').append('<span class="badge badge-white" style="margin-left: 10px;">白名单</span>');
+                alert('已成功添加到白名单！');
+            } else {
+                alert('此联系人已在白名单中。');
+            }
+        }
+        $('#whitelistModal').modal('hide');
+    });
+
+    function updateContactListTags() {
+        var whitelist = localStorage.getItem('whitelist') ? JSON.parse(localStorage.getItem('whitelist')) : [];
+        $('.contact-item').each(function() {
+            var userId = $(this).data('user-id');
+            if (whitelist.includes(userId) && !$(this).find('.badge-white').length) {
+                $(this).append('<span class="badge badge-white" style="margin-left: 10px;">白名单</span>');
+            }
+        });
+    }
+    updateContactListTags(); // 初次加载时更新
+    
+    $(document).on('click', '.contact-item', function() {
+        // 已有的点击事件代码...
+        updateContactListTags(); // 每次点击更新
     });
 
     // 添加行的逻辑

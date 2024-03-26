@@ -30,7 +30,7 @@
     </div>
 </nav>
 
-<!-- Modal -->
+<!-- 数据刷新模态框 -->
 <div class="modal" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -44,7 +44,7 @@
     </div>
 </div>
 
-<!-- 弹窗模态框 -->
+<!-- 添加学校缩写模态框 -->
 <div class="modal fade" id="schoolModal" tabindex="-1" aria-labelledby="schoolModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -78,8 +78,28 @@
         </div>
       </div>
     </div>
-  </div>
+</div>
 
+<!-- 添加白名单模态框 -->
+<div class="modal fade" id="whitelistModal" tabindex="-1" aria-labelledby="whitelistModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="whitelistModalLabel">添加到白名单</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                确定将选中的联系人添加到白名单吗？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="confirmAddToWhitelist">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container-fluid">
     <div class="row">
@@ -87,7 +107,8 @@
             <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                 <div class="btn-group mr-2" role="group" aria-label="First group">
                     <button type="button" id="refresh_data" class="btn btn-secondary btn-sm mr-2">Refresh Data</button>
-                    <button type="button" id="school_nickname" class="btn btn-secondary btn-sm">设置学校缩写</button>
+                    <button type="button" id="school_nickname" class="btn btn-secondary btn-sm mr-2">设置学校缩写</button>
+                    <button type="button" id="add_to_whitelist" class="btn btn-secondary btn-sm">添加白名单</button>
                 </div>
             </div>
         </div>
@@ -96,7 +117,7 @@
         <div class="col-4">
             <!-- 联系人筛选框 -->
             <div class="filter-section">
-                <input type="checkbox" id="hide-lead-checkbox" onclick="filterContacts()">
+                <input type="checkbox" id="hide-lead-checkbox">
                 <label for="hide-lead-checkbox">隐藏已存在Leads的联系人</label>
             </div>
             <!-- 联系人列表 -->

@@ -26,3 +26,19 @@
     background-color: #007bff;
     color: white;
 }
+
+.badge-white {
+    display: inline-block;
+    padding: 0.25em 0.4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem; /* 圆角大小 */
+    background-color: white; /* 背景色 */
+    color: black; /* 文字颜色 */
+    border: 1px solid #28a745; /* 边框颜色与badge-success相同 */
+    margin-left: 10px; /* 左边距 */
+}
