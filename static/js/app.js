@@ -87,7 +87,7 @@ $(document).ready(function() {
             schoolData.forEach(function(data) {
                 // 这里应该是您添加新行到界面的代码
                 $('#addedRows').append(
-                    '<div class="row">' +
+                    '<div class="row school-row">' +
                     '<span class="school-name">' + data.schoolName + '</span> - ' +
                     '<span class="school-abbreviation">' + data.abbreviation + '</span>' +
                     '</div>'
@@ -146,11 +146,6 @@ $(document).ready(function() {
         });
     }
     updateContactListTags(); // 初次加载时更新
-    
-    $(document).on('click', '.contact-item', function() {
-        // 已有的点击事件代码...
-        updateContactListTags(); // 每次点击更新
-    });
 
     // 添加行的逻辑
     $('#addRow').click(function() {
@@ -178,11 +173,13 @@ $(document).ready(function() {
         var schoolData = [];
         $('.school-row').each(function() { // 改为遍历所有 '.school-row'
             var row = $(this);
+            console.log(row);
             var schoolName = row.find('.school-name').text();
             var abbreviation = row.find('.school-abbreviation').text();
             schoolData.push({schoolName: schoolName, abbreviation: abbreviation});
         });
         if (schoolData) {
+            console.log(schoolData);
             localStorage.setItem('schoolData', JSON.stringify(schoolData)); // 将数据保存到 localStorage
         } else {
             alert('没有数据需要保存！');
@@ -226,6 +223,7 @@ $(document).ready(function() {
             });
     
             // 隐藏模态框
+            updateContactListTags(); 
             $('#loadingModal').modal('hide');
             alert('数据刷新成功！');
         }).fail(function() {
@@ -251,6 +249,7 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.contact-item', function() {
+        updateContactListTags(); // 每次点击更新
         var userId = $(this).data('user-id');
         var self = this; // 保存 this 的引用
 
@@ -378,6 +377,7 @@ $(document).ready(function() {
                     if(response.status === 'success') {
                         alert('Leads创建成功！');
                         location.reload();
+                        updateContactListTags(); 
                     } else if (response.status === 'Failed') {
                         alert('操作失败，请截图页面以及console内容，联系管理员处理！');
                     }
