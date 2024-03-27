@@ -47,7 +47,7 @@ if (!RegExp.escape) {
     };
 }
 
-function filterContactsWithoutLeads() {
+function filterContacts() {
     const isChecked = $('#hide-lead-checkbox').is(':checked');
     $('.contact-item').each(function() {
         const hasLead = $(this).find('.badge-success').length > 0;
@@ -69,13 +69,30 @@ function markUnfilled(selector, isFilled) {
     }
 }
 
+function updateContactListTags() {
+    var whitelist = localStorage.getItem('whitelist') ? JSON.parse(localStorage.getItem('whitelist')) : [];
+    $('.contact-item').each(function() {
+        var userId = $(this).data('user-id');
+        if (whitelist.includes(userId) && !$(this).find('.badge-white').length) {
+            $(this).append('<span class="badge badge-white" style="margin-left: 10px;">白名单</span>');
+        }
+    });
+}
+
 $(document).ready(function() {
 
-    // 新增筛选联系人的逻辑
+    updateContactListTags(); // 初次加载时更新
+
+    // 页面加载时根据localStorage设置复选框状态，并过滤联系人
+    const isChecked = localStorage.getItem('hide-lead-checkbox') === 'true';
+    $('#hide-lead-checkbox').prop('checked', isChecked);
+    filterContacts(); // 调用过滤函数
+
+    // 监听复选框的改变事件
     $('#hide-lead-checkbox').change(function() {
-        filterContactsWithoutLeads();
+        localStorage.setItem('hide-lead-checkbox', this.checked);
+        filterContacts(); // 重新过滤联系人
     });
-    filterContactsWithoutLeads();
 
     $('#schoolModal').on('shown.bs.modal', function () {
         // 先清空现有的行
@@ -119,6 +136,7 @@ $(document).ready(function() {
             alert('请先选择一个联系人！');
         }
     });
+
     // 添加白名单按钮的确认事件
     $('#confirmAddToWhitelist').click(function() {
         var userId = $('.contact-item.active').data('user-id');
@@ -128,6 +146,7 @@ $(document).ready(function() {
                 whitelist.push(userId);
                 localStorage.setItem('whitelist', JSON.stringify(whitelist));
                 $('.contact-item.active').append('<span class="badge badge-white" style="margin-left: 10px;">白名单</span>');
+                filterContacts();
                 alert('已成功添加到白名单！');
             } else {
                 alert('此联系人已在白名单中。');
@@ -135,17 +154,6 @@ $(document).ready(function() {
         }
         $('#whitelistModal').modal('hide');
     });
-
-    function updateContactListTags() {
-        var whitelist = localStorage.getItem('whitelist') ? JSON.parse(localStorage.getItem('whitelist')) : [];
-        $('.contact-item').each(function() {
-            var userId = $(this).data('user-id');
-            if (whitelist.includes(userId) && !$(this).find('.badge-white').length) {
-                $(this).append('<span class="badge badge-white" style="margin-left: 10px;">白名单</span>');
-            }
-        });
-    }
-    updateContactListTags(); // 初次加载时更新
 
     // 添加行的逻辑
     $('#addRow').click(function() {
@@ -173,13 +181,11 @@ $(document).ready(function() {
         var schoolData = [];
         $('.school-row').each(function() { // 改为遍历所有 '.school-row'
             var row = $(this);
-            console.log(row);
             var schoolName = row.find('.school-name').text();
             var abbreviation = row.find('.school-abbreviation').text();
             schoolData.push({schoolName: schoolName, abbreviation: abbreviation});
         });
         if (schoolData) {
-            console.log(schoolData);
             localStorage.setItem('schoolData', JSON.stringify(schoolData)); // 将数据保存到 localStorage
         } else {
             alert('没有数据需要保存！');
@@ -311,12 +317,9 @@ $(document).ready(function() {
             if (!userValues["Account__c"]){
                 var selfContent = extractContent(self.innerHTML); // 提取括号内的内容
                 // 从 localStorage 中获取学校数据
-                console.log(selfContent);
                 var storedSchoolData = localStorage.getItem('schoolData');
                 var schools = storedSchoolData ? JSON.parse(storedSchoolData) : [];
-                console.log(schools);
                 var schoolFullName = findSchoolAbbreviation(selfContent, schools);
-                console.log(schoolFullName);
                 $('#Account__c').val(schoolFullName).trigger('change');
                 if(!schoolFullName) {
                     // 如果没有值，则重置Select2以显示占位符
@@ -373,11 +376,9 @@ $(document).ready(function() {
                 contentType: 'application/json',
                 data: JSON.stringify({ user_id: userId, action_data: actionData }),
                 success: function(response) {
-                    console.log(response);
                     if(response.status === 'success') {
                         alert('Leads创建成功！');
                         location.reload();
-                        updateContactListTags(); 
                     } else if (response.status === 'Failed') {
                         alert('操作失败，请截图页面以及console内容，联系管理员处理！');
                     }
