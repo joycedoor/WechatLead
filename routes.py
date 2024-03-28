@@ -1,8 +1,7 @@
 from flask import request, jsonify, render_template
 from salesforce import *
 from wechat_utils import *
-import json
-
+from config_manager import config
 
 def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, refresh_token, wx_info):
     
@@ -80,7 +79,7 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
     def refresh_data():
         decrypt_wechat_database(wx_info)
 
-        contacts_info, messages = query_contacts_and_messages(config.DB_PATH, config.MSG_DAYS, config.CONTACT_DAYS)
+        contacts_info, messages = query_contacts_and_messages(config.get("DB_PATH"), config.get("MSG_DAYS"), config.get("CONTACT_DAYS"))
         sf.refresh_access_token()
         initial_values = sf.search_contact(contacts_info, sf_init['account_dict'])
         return jsonify({

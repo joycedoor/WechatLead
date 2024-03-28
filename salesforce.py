@@ -4,14 +4,14 @@ from simple_salesforce.exceptions import SalesforceMalformedRequest, SalesforceE
 import socket
 import requests
 import urllib
-from config import *
+from config_manager import config
 import webbrowser
 
 class SalesforceManager:
     def __init__(self):
         self.sf = None
         self.refresh_token = None
-        self.initialize_salesforce(CLIENT_ID)
+        self.initialize_salesforce(config.get("CLIENT_ID"))
 
     def initialize_salesforce(self, client_id):
         print("即将开始 Salesforce 登录，登录完成后请返回本窗口")
@@ -57,8 +57,8 @@ class SalesforceManager:
         url = "https://login.salesforce.com/services/oauth2/token"
         payload = {
             "grant_type": "authorization_code",
-            "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET,
+            "client_id": config.get("CLIENT_ID"),
+            "client_secret": config.get("CLIENT_SECRET"),
             "redirect_uri": "http://localhost:5000",
             "code": auth_code,
         }
@@ -144,8 +144,8 @@ class SalesforceManager:
         url = "https://login.salesforce.com/services/oauth2/token"
         payload = {
             "grant_type": "refresh_token",
-            "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET,
+            "client_id": config.get("CLIENT_ID"),
+            "client_secret": config.get("CLIENT_SECRET"),
             "refresh_token": self.refresh_token,
         }
 

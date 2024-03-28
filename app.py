@@ -1,11 +1,10 @@
-import config
+from config_manager import config
 from wechat_utils import *
 from flask import Flask
 from salesforce import *
 from routes import *
 import time
 import threading
-from datetime import datetime
 import logging
 from logging.handlers import RotatingFileHandler
 import sys
@@ -32,15 +31,11 @@ def create_app():
 
     sf = SalesforceManager()
     sf_init = sf.get_init()
-
-    contacts_info, messages = query_contacts_and_messages(config.DB_PATH, config.MSG_DAYS, config.CONTACT_DAYS)
-
+    contacts_info, messages = query_contacts_and_messages(config.get("DB_PATH"), config.get("MSG_DAYS"), config.get("CONTACT_DAYS"))
     initial_values = sf.search_contact(contacts_info, sf_init['account_dict'])
-
     # TODO: 处理initial_values的函数，并且需要方便后续维护，添加诸如chatgpt之类的功能
 
     configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, sf.refresh_token, wx_info)
-
     return app
 
 if __name__ == '__main__':
@@ -56,4 +51,4 @@ if __name__ == '__main__':
 
     app = create_app()
     threading.Thread(target=open_browser).start()
-    app.run(debug=config.DEBUG)
+    app.run(debug=config.get("DEBUG"))

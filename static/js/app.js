@@ -278,7 +278,8 @@ $(document).ready(function() {
                 "Member_First_Name__c",
                 "Member_Last_Name__c",
                 "Date_of_Birth__c",
-                "Email"
+                "Email",
+                "Note_and_Description__c"
             ];
 
             formElementIds.forEach(function(id) {
