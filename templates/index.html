@@ -81,6 +81,37 @@
     </div>
 </div>
 
+<!-- 修改默认值模态框 -->
+<div class="modal fade" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="schoolModalLabel">修改配置</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- 表单放在这里 -->
+          <form id="configForm">
+            <div class="form-group">
+              <label for="msgdaySelect">展示多少天内的聊天记录</label>
+              <input type="text" class="form-control" id="msgdaySelect">
+            </div>
+            <div class="form-group">
+              <label for="contactSelect">展示多少天内的联系人</label>
+              <input type="text" class="form-control" id="contactSelect">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary" id="saveConfigChanges">保存更改</button>
+        </div>
+      </div>
+    </div>
+</div>
+
 <!-- 添加白名单模态框 -->
 <div class="modal fade" id="whitelistModal" tabindex="-1" aria-labelledby="whitelistModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -109,7 +140,8 @@
                 <div class="btn-group mr-2" role="group" aria-label="First group">
                     <button type="button" id="refresh_data" class="btn btn-secondary btn-sm mr-2">Refresh Data</button>
                     <button type="button" id="school_nickname" class="btn btn-secondary btn-sm mr-2">设置学校缩写</button>
-                    <button type="button" id="add_to_whitelist" class="btn btn-secondary btn-sm">添加白名单</button>
+                    <button type="button" id="add_to_whitelist" class="btn btn-secondary btn-sm mr-2">添加白名单</button>
+                    <button type="button" id="edit_config" class="btn btn-secondary btn-sm">修改配置</button>
                 </div>
             </div>
         </div>

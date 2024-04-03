@@ -20,6 +20,27 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
     def get_school_names():
         # school_names是包含所有account学校名字的list
         return jsonify(list(sf_init['account_dict'].values()))
+    
+    @app.route('/get_config_values')
+    def get_config_values():
+        c = {}
+        c['MSG_DAYS'] = config.get('MSG_DAYS')
+        c['CONTACT_DAYS'] = config.get('CONTACT_DAYS')   
+        return jsonify(c)
+    
+    @app.route('/set_config_values', methods=['POST'])
+    def set_config_values():
+        try:
+            MSG_DAYS = request.json.get('MSG_DAYS')
+            CONTACT_DAYS = request.json.get('CONTACT_DAYS')
+
+            config.set('MSG_DAYS', MSG_DAYS)
+            config.set('CONTACT_DAYS', CONTACT_DAYS)
+
+            return jsonify({'status': 'Success'})
+        except Exception as e:
+            print(e) 
+            return jsonify({'status': 'Failed'})
 
     @app.route('/get_initial_values/<user_id>')
     def get_initial_values(user_id):

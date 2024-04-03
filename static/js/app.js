@@ -137,6 +137,46 @@ $(document).ready(function() {
         }
     });
 
+    // 修改默认值点击显示模态框
+    $('#edit_config').click(function() {
+        $('#configModal').modal('show');
+    });
+
+    // 修改默认值模态框的事件
+    $('#configModal').on('shown.bs.modal', function () {
+        // 获取config数据
+        $.get('/get_config_values', function(data) {
+            // 解析返回的 JSON 数据并更新页面
+            $('#msgdaySelect').val(data['MSG_DAYS']);
+            $('#contactSelect').val(data['CONTACT_DAYS']);
+        }).fail(function() {
+            // 如果请求失败，也关闭模态框，并通知用户
+            $('#configModal').modal('hide');
+            alert('获取数据失败，请联系管理员');
+        });
+    });
+
+    // 修改默认值模态框的确认
+    $('#saveConfigChanges').click(function() {
+        var MSG_DAYS = $('#msgdaySelect').val();
+        var CONTACT_DAYS = $('#contactSelect').val();
+
+        $.ajax({
+            url: '/set_config_values', 
+            type: 'POST', 
+            contentType: 'application/json',
+            data: JSON.stringify({ MSG_DAYS: MSG_DAYS, CONTACT_DAYS: CONTACT_DAYS }), 
+            success: function(response) {
+                console.log(response); // 在控制台打印服务器响应
+            },
+            error: function(error) {
+                console.log(error); // 在控制台打印出错信息
+            }
+        });
+        
+        $('#configModal').modal('hide');
+    });
+
     // 添加白名单按钮的确认事件
     $('#confirmAddToWhitelist').click(function() {
         var userId = $('.contact-item.active').data('user-id');
