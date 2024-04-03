@@ -42,3 +42,8 @@
     border: 1px solid #28a745; /* 边框颜色与badge-success相同 */
     margin-left: 10px; /* 左边距 */
 }
+
+.extra-small-text {
+    font-size: 0.7rem; /* 设置较小的字体大小 */
+    line-height: 1.2; /* 适当调整行高以改善可读性 */
+}

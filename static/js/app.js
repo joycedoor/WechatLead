@@ -259,8 +259,8 @@ $(document).ready(function() {
         var userId = $(this).data('user-id');
         var self = this; // 保存 this 的引用
 
-        $.getJSON('/get_initial_values', function(data) {
-            var userValues = data[userId];
+        $.getJSON('/get_initial_values/' + userId, function(data) {
+            var userValues = data;
             $('.contact-item').removeClass('active');
             $(self).addClass('active');
             $('.chat-messages').empty(); // 使用 . 而不是 # 来选中 class

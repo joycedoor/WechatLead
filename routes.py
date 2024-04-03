@@ -21,9 +21,9 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
         # school_names是包含所有account学校名字的list
         return jsonify(list(sf_init['account_dict'].values()))
 
-    @app.route('/get_initial_values')
-    def get_initial_values():
-        return jsonify(initial_values)
+    @app.route('/get_initial_values/<user_id>')
+    def get_initial_values(user_id):
+        return jsonify(initial_values[user_id])
 
     @app.route('/submit_action', methods=['POST'])
     def submit_action():

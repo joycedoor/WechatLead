@@ -74,8 +74,10 @@ class SalesforceManager:
     def get_init(self):
         d = {}
         try:
-            result = self.sf.query_all(format_soql("SELECT Status FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY Status"))
-            d['Lead_Status_dropdown'] = [record['Status'] for record in result['records'] if record['Status'] is not None and record['Status'][-2:] != '_c']
+            #result = self.sf.query_all(format_soql("SELECT Status FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY Status"))
+            #d['Lead_Status_dropdown'] = [record['Status'] for record in result['records'] if record['Status'] is not None and record['Status'][-2:] != '_c']
+            d['Lead_Status_dropdown'] = ["New", "MKT Connecting", "CIS Connecting", "Group Connecting", "Waiting OE", "No Response", "Lost Comp" ,
+                                         "Lost School", "Enrolled Not Verified", "Enrolled", "Canceled", "Expired", "Converted"]
 
             result = self.sf.query("SELECT WeChat_Agents_List__c FROM Lead where RecordTypeId='0123j000001QWVZAA4' GROUP BY WeChat_Agents_List__c")
             d['WeChat_Agents_dropdown'] = [record['WeChat_Agents_List__c'] for record in result['records'] if record['WeChat_Agents_List__c'] and record['WeChat_Agents_List__c'][-2:] != '_c']
