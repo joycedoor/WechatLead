@@ -75,6 +75,8 @@ def configure_routes(app, sf, initial_values, contacts_info, messages, sf_init, 
         if not LastName:
             #如果前端没输入last name（which is wrong），那就用contacts_info去找，总归是能找到的
             action_data['LastName'] = contacts_info[user_id][0]
+            
+        action_data['Original_WXID__c'] = user_id #添加原始wxid
 
         try:
             res = sf.sf.Lead.create(action_data)

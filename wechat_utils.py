@@ -11,7 +11,7 @@ def initialize_wechat():
         if len(wx_info) > 1:
             
             for ind, wx in enumerate(wx_info):
-                print(f"[{ind}] : {wx['name']}")
+                print(f"[{ind}] : {wx['account']}")
             num = int(input("存在多个微信，请输入微信号对应的数字来选择需要解析的微信: "))
             return(wx_info[num])
         
