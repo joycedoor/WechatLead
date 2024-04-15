@@ -137,8 +137,6 @@ class SalesforceManager:
 
             # 识别家长和 TODO：学校
             initial_values[wxid]['Student_or_Parent__c'] = 'Parent' if '家长' in info['Remark'] else 'Student'
-
-
                 
         return initial_values
 
