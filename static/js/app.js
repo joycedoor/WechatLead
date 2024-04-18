@@ -259,6 +259,7 @@ $(document).ready(function() {
         $.get('/refresh_data', function(data) {
             // 解析返回的 JSON 数据并更新页面
             $('#contact-list').empty(); // 清空当前列表
+            console.log(data);
             $.each(data.contacts_info, function(index, contact) {
                 $('#contact-list').append(
                     `<li class="list-group-item contact-item" data-user-id="${index}">

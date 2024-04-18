@@ -1,4 +1,4 @@
-from flask import request, jsonify, render_template, g
+from flask import request, jsonify, render_template
 from salesforce import SalesforceManager
 from wechat_utils import *
 from config_manager import config
@@ -7,13 +7,13 @@ def configure_routes(app, sf, sf_init, wx_info):
     
     @app.route('/')
     def index():
-        return render_template('index.html', contacts_info=g.contacts_info, initial_values = g.initial_values, 
-                            messages=g.messages, Lead_Status_dropdown=sf_init['Lead_Status_dropdown'], WeChat_Agents_dropdown=sf_init['WeChat_Agents_dropdown'],
+        return render_template('index.html', contacts_info=app.config['global_data']['contacts_info'], initial_values = app.config['global_data']['initial_values'], 
+                            messages=app.config['global_data']['messages'], Lead_Status_dropdown=sf_init['Lead_Status_dropdown'], WeChat_Agents_dropdown=sf_init['WeChat_Agents_dropdown'],
                             WeCom_Agents_dropdown=sf_init['WeCom_Agents_dropdown'], Sales_WeChat_dropdown=sf_init['Sales_WeChat_dropdown'])
 
     @app.route('/get_messages/<user_id>')
     def get_messages(user_id):
-        user_messages = g.messages.get(user_id, [])
+        user_messages = app.config['global_data']['messages'].get(user_id, [])
         return jsonify(user_messages)
 
     @app.route('/get_school_names')
@@ -44,7 +44,7 @@ def configure_routes(app, sf, sf_init, wx_info):
 
     @app.route('/get_initial_values/<user_id>')
     def get_initial_values(user_id):
-        return jsonify(g.initial_values[user_id])
+        return jsonify(app.config['global_data']['initial_values'][user_id])
 
     @app.route('/submit_action', methods=['POST'])
     def submit_action():
@@ -74,16 +74,16 @@ def configure_routes(app, sf, sf_init, wx_info):
         LastName = action_data.get('LastName', False)
         if not LastName:
             #如果前端没输入last name（which is wrong），那就用contacts_info去找，总归是能找到的
-            action_data['LastName'] = g.contacts_info[user_id][0]
+            action_data['LastName'] = app.config['global_data']['contacts_info'][user_id][0]
             
         action_data['Original_WXID__c'] = user_id #添加原始wxid
 
         try:
             res = sf.sf.Lead.create(action_data)
-            g.initial_values[user_id] = action_data
-            g.initial_values[user_id]['is_in_SF'] = 1
-            g.initial_values[user_id]['Account__c'] = school_text
-            g.initial_values[user_id]['link'] = "https://smcovered.lightning.force.com/lightning/r/Lead/%s/view"%(res.get('id'))
+            app.config['global_data']['initial_values'][user_id] = action_data
+            app.config['global_data']['initial_values'][user_id]['is_in_SF'] = 1
+            app.config['global_data']['initial_values'][user_id]['Account__c'] = school_text
+            app.config['global_data']['initial_values'][user_id]['link'] = "https://smcovered.lightning.force.com/lightning/r/Lead/%s/view"%(res.get('id'))
 
             return jsonify({'status': 'success'})
         except SalesforceExpiredSession:
@@ -107,10 +107,9 @@ def configure_routes(app, sf, sf_init, wx_info):
         initial_values = sf.search_contact(contacts_info, sf_init['account_dict'])
 
         # 更新 g 对象的全局变量
-        g.contacts_info = contacts_info
-        g.messages = messages
-        g.initial_values = initial_values
-
+        app.config['global_data']['contacts_info'] = contacts_info
+        app.config['global_data']['messages'] = messages
+        app.config['global_data']['initial_values'] = initial_values
         return jsonify({
             'contacts_info': contacts_info,
             'messages': messages,
