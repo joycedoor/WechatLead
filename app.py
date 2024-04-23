@@ -49,7 +49,7 @@ def create_app():
 
 if __name__ == '__main__':
     # 设置最大日志文件大小（例如10MB）和备份文件数量（例如5）
-    '''
+    
     max_log_size = 5 * 1024 * 1024  # 10 MB
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)  
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     handler.setLevel(logging.INFO)  # 设置处理器的日志级别
     logger.addHandler(handler)
     sys.stderr = logging.StreamHandler(sys.stderr)
-    '''
+    
     app = create_app()
     threading.Thread(target=open_browser).start()
     app.run(debug=config.get("DEBUG"))
