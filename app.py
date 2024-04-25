@@ -29,7 +29,8 @@ def create_app():
     'initial_values': {},
     'DefaultPlatform': '',
     'DefaultWechatAgent': '',
-    'DefaultWecomAgent': ''
+    'DefaultWecomAgent': '',
+    'DefaultSalesWechatAgent': ''
     }
 
     from routes import configure_routes

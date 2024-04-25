@@ -29,6 +29,7 @@ def configure_routes(app, sf, sf_init, wx_info):
         c['DefaultPlatform'] = app.config['global_data']['DefaultPlatform']
         c['DefaultWechatAgent'] = app.config['global_data']['DefaultWechatAgent']
         c['DefaultWecomAgent'] = app.config['global_data']['DefaultWecomAgent']
+        c['DefaultSalesWechatAgent'] = app.config['global_data']['DefaultSalesWechatAgent']
         return jsonify(c)
     
     @app.route('/set_config_values', methods=['POST'])
@@ -39,6 +40,7 @@ def configure_routes(app, sf, sf_init, wx_info):
             DefaultPlatform = request.json.get('DefaultPlatform')
             DefaultWechatAgent = request.json.get('DefaultWechatAgent')
             DefaultWecomAgent = request.json.get('DefaultWecomAgent')
+            DefaultSalesWechatAgent = request.json.get('DefaultSalesWechatAgent')
 
             config.set('MSG_DAYS', MSG_DAYS)
             config.set('CONTACT_DAYS', CONTACT_DAYS)
@@ -46,6 +48,7 @@ def configure_routes(app, sf, sf_init, wx_info):
             app.config['global_data']['DefaultPlatform'] = DefaultPlatform
             app.config['global_data']['DefaultWechatAgent'] = DefaultWechatAgent
             app.config['global_data']['DefaultWecomAgent'] = DefaultWecomAgent
+            app.config['global_data']['DefaultSalesWechatAgent'] = DefaultSalesWechatAgent
 
             return jsonify({'status': 'Success'})
         except Exception as e:

@@ -104,7 +104,16 @@
                 <input type="text" class="form-control" id="contactSelect">
             </div>
             <div class="form-group">
-                <label for="contactSelect">默认Social Media Platform</label>
+                <label for="DefaultSalesWechatAgent">默认SalesWechatAccount</label>
+                <select class="form-control" id="DefaultSalesWechatAgent">
+                    <option value="">Please select</option>
+                    {% for option in Sales_WeChat_dropdown %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="DefaultPlatform">默认Social Media Platform</label>
                 <select class="form-control Social_Media_Platform" id="DefaultPlatform">
                     <option value="">Please select</option>
                     <option value="WeChat">WeChat</option>
@@ -112,7 +121,7 @@
                 </select>
             </div>
             <div class="form-group WeChat_Agents_List__c_container" style="display:none;">
-                <label for="contactSelect">默认Wechat Agent List</label>
+                <label for="DefaultWechatAgent">默认Wechat Agent List</label>
                 <select class="form-control WeChat_Agents_List" id="DefaultWechatAgent">
                     <option value="">Please select</option>
                     {% for option in WeChat_Agents_dropdown %}
@@ -121,7 +130,7 @@
                 </select>
             </div>
             <div class="form-group WeCom_Agents_List__c_container" style="display:none;">
-                <label for="contactSelect">默认Wecom Agent List</label>
+                <label for="DefaultWecomAgent">默认Wecom Agent List</label>
                 <select class="form-control WeCom_Agents_List" id="DefaultWecomAgent">
                     <option value="">Please select</option>
                     {% for option in WeCom_Agents_dropdown %}

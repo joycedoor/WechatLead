@@ -152,6 +152,7 @@ $(document).ready(function() {
             $('#DefaultPlatform').val(data['DefaultPlatform']);
             $('#DefaultWechatAgent').val(data['DefaultWechatAgent']);
             $('#DefaultWecomAgent').val(data['DefaultWecomAgent']);
+            $('#DefaultSalesWechatAgent').val(data['DefaultWecomAgent']);
         }).fail(function() {
             // 如果请求失败，也关闭模态框，并通知用户
             $('#configModal').modal('hide');
@@ -166,13 +167,14 @@ $(document).ready(function() {
         var DefaultPlatform = $('#DefaultPlatform').val();
         var DefaultWechatAgent = $('#DefaultWechatAgent').val();
         var DefaultWecomAgent = $('#DefaultWecomAgent').val();
+        var DefaultSalesWechatAgent = $('#DefaultSalesWechatAgent').val();
 
         $.ajax({
             url: '/set_config_values', 
             type: 'POST', 
             contentType: 'application/json',
             data: JSON.stringify({ MSG_DAYS: MSG_DAYS, CONTACT_DAYS: CONTACT_DAYS, 
-                DefaultPlatform: DefaultPlatform, DefaultWechatAgent: DefaultWechatAgent, DefaultWecomAgent: DefaultWecomAgent}), 
+                DefaultPlatform: DefaultPlatform, DefaultWechatAgent: DefaultWechatAgent, DefaultWecomAgent: DefaultWecomAgent, DefaultSalesWechatAgent: DefaultSalesWechatAgent}), 
             success: function(response) {
                 console.log(response); // 在控制台打印服务器响应
             },

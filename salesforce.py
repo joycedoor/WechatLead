@@ -142,6 +142,7 @@ class SalesforceManager:
                 initial_values[wxid]['Social_Media_Platform__c'] = app.config['global_data']['DefaultPlatform']
                 initial_values[wxid]['WeChat_Agents_List__c'] = app.config['global_data']['DefaultWechatAgent']
                 initial_values[wxid]['WeCom_Agents_List__c'] = app.config['global_data']['DefaultWecomAgent']
+                initial_values[wxid]['Sales_WeChat_Account__c'] = app.config['global_data']['DefaultSalesWechatAgent']
             
                 
         return initial_values
