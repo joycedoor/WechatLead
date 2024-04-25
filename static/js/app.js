@@ -149,6 +149,9 @@ $(document).ready(function() {
             // 解析返回的 JSON 数据并更新页面
             $('#msgdaySelect').val(data['MSG_DAYS']);
             $('#contactSelect').val(data['CONTACT_DAYS']);
+            $('#DefaultPlatform').val(data['DefaultPlatform']);
+            $('#DefaultWechatAgent').val(data['DefaultWechatAgent']);
+            $('#DefaultWecomAgent').val(data['DefaultWecomAgent']);
         }).fail(function() {
             // 如果请求失败，也关闭模态框，并通知用户
             $('#configModal').modal('hide');
@@ -160,12 +163,16 @@ $(document).ready(function() {
     $('#saveConfigChanges').click(function() {
         var MSG_DAYS = $('#msgdaySelect').val();
         var CONTACT_DAYS = $('#contactSelect').val();
+        var DefaultPlatform = $('#DefaultPlatform').val();
+        var DefaultWechatAgent = $('#DefaultWechatAgent').val();
+        var DefaultWecomAgent = $('#DefaultWecomAgent').val();
 
         $.ajax({
             url: '/set_config_values', 
             type: 'POST', 
             contentType: 'application/json',
-            data: JSON.stringify({ MSG_DAYS: MSG_DAYS, CONTACT_DAYS: CONTACT_DAYS }), 
+            data: JSON.stringify({ MSG_DAYS: MSG_DAYS, CONTACT_DAYS: CONTACT_DAYS, 
+                DefaultPlatform: DefaultPlatform, DefaultWechatAgent: DefaultWechatAgent, DefaultWecomAgent: DefaultWecomAgent}), 
             success: function(response) {
                 console.log(response); // 在控制台打印服务器响应
             },
@@ -175,6 +182,7 @@ $(document).ready(function() {
         });
         
         $('#configModal').modal('hide');
+        location.reload();
     });
 
     // 添加白名单按钮的确认事件
@@ -280,18 +288,22 @@ $(document).ready(function() {
         });
     });
 
-    $('#Social_Media_Platform__c').change(function() {
+    $('.Social_Media_Platform').change(function() {
         var platform = $(this).val();
         // 根据选择显示/隐藏 WeChat 或 WeCom 代理列表
         if(platform === "WeChat") {
-            $('#WeChat_Agents_List__c_container').show();
-            $('#WeCom_Agents_List__c_container').hide();
+            $('.WeChat_Agents_List__c_container').show();
+            $('.WeCom_Agents_List__c_container').hide();
+            $('.WeCom_Agents_List').val('');
         } else if(platform === "WeCom") {
-            $('#WeCom_Agents_List__c_container').show();
-            $('#WeChat_Agents_List__c_container').hide();
+            $('.WeCom_Agents_List__c_container').show();
+            $('.WeChat_Agents_List__c_container').hide();
+            $('.WeChat_Agents_List').val('');
         } else {
-            $('#WeChat_Agents_List__c_container').hide();
-            $('#WeCom_Agents_List__c_container').hide();
+            $('.WeChat_Agents_List__c_container').hide();
+            $('.WeCom_Agents_List__c_container').hide();
+            $('.WeChat_Agents_List').val('');
+            $('.WeCom_Agents_List').val('');
         }
     });
 
@@ -340,12 +352,15 @@ $(document).ready(function() {
                 // 特殊处理下拉框显示/隐藏逻辑
                 if(id === "Social_Media_Platform__c" && value) {
                     if(value === "WeChat") {
-                        $('#WeChat_Agents_List__c_container').show();
-                        $('#WeCom_Agents_List__c_container').hide();
+                        $('.WeChat_Agents_List__c_container').show();
+                        $('.WeCom_Agents_List__c_container').hide();
                     } else if(value === "WeCom") {
-                        $('#WeCom_Agents_List__c_container').show();
-                        $('#WeChat_Agents_List__c_container').hide();
+                        $('.WeCom_Agents_List__c_container').show();
+                        $('.WeChat_Agents_List__c_container').hide();
                     }
+                } else if(id === "Social_Media_Platform__c") {
+                    $('.WeCom_Agents_List__c_container').hide();
+                    $('.WeChat_Agents_List__c_container').hide();
                 }
             });
 

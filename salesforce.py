@@ -102,7 +102,7 @@ class SalesforceManager:
         except Exception as e:
             print(e)
 
-    def search_contact(self, contacts_info, account_dict):
+    def search_contact(self, contacts_info, account_dict, app):
         initial_values = {key: {} for key in contacts_info.keys()}
 
         #通过wxid 查找
@@ -131,12 +131,18 @@ class SalesforceManager:
                 initial_values[wxid]["is_in_SF"] = 0
 
             # 对initial values的额外处理
-            # 默认识别LastName
-            if 'LastName' not in initial_values[wxid]:
+            if initial_values[wxid]['is_in_SF'] == 0:
+                # 默认识别LastName
                 initial_values[wxid]['LastName'] = contacts_info[wxid]['Alias']
 
-            # 识别家长和 TODO：学校
-            initial_values[wxid]['Student_or_Parent__c'] = 'Parent' if '家长' in info['Remark'] else 'Student'
+                # 识别家长
+                initial_values[wxid]['Student_or_Parent__c'] = 'Parent' if '家长' in info['Remark'] else 'Student'
+
+                # 识别默认Social Media Platform
+                initial_values[wxid]['Social_Media_Platform__c'] = app.config['global_data']['DefaultPlatform']
+                initial_values[wxid]['WeChat_Agents_List__c'] = app.config['global_data']['DefaultWechatAgent']
+                initial_values[wxid]['WeCom_Agents_List__c'] = app.config['global_data']['DefaultWecomAgent']
+            
                 
         return initial_values
 

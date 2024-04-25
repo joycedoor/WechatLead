@@ -25,7 +25,10 @@ def configure_routes(app, sf, sf_init, wx_info):
     def get_config_values():
         c = {}
         c['MSG_DAYS'] = config.get('MSG_DAYS')
-        c['CONTACT_DAYS'] = config.get('CONTACT_DAYS')   
+        c['CONTACT_DAYS'] = config.get('CONTACT_DAYS')
+        c['DefaultPlatform'] = app.config['global_data']['DefaultPlatform']
+        c['DefaultWechatAgent'] = app.config['global_data']['DefaultWechatAgent']
+        c['DefaultWecomAgent'] = app.config['global_data']['DefaultWecomAgent']
         return jsonify(c)
     
     @app.route('/set_config_values', methods=['POST'])
@@ -33,9 +36,16 @@ def configure_routes(app, sf, sf_init, wx_info):
         try:
             MSG_DAYS = request.json.get('MSG_DAYS')
             CONTACT_DAYS = request.json.get('CONTACT_DAYS')
+            DefaultPlatform = request.json.get('DefaultPlatform')
+            DefaultWechatAgent = request.json.get('DefaultWechatAgent')
+            DefaultWecomAgent = request.json.get('DefaultWecomAgent')
 
             config.set('MSG_DAYS', MSG_DAYS)
             config.set('CONTACT_DAYS', CONTACT_DAYS)
+
+            app.config['global_data']['DefaultPlatform'] = DefaultPlatform
+            app.config['global_data']['DefaultWechatAgent'] = DefaultWechatAgent
+            app.config['global_data']['DefaultWecomAgent'] = DefaultWecomAgent
 
             return jsonify({'status': 'Success'})
         except Exception as e:
@@ -104,9 +114,9 @@ def configure_routes(app, sf, sf_init, wx_info):
 
         contacts_info, messages = query_contacts_and_messages(config.get("DB_PATH"), config.get("MSG_DAYS"), config.get("CONTACT_DAYS"))
         sf.refresh_access_token()
-        initial_values = sf.search_contact(contacts_info, sf_init['account_dict'])
+        initial_values = sf.search_contact(contacts_info, sf_init['account_dict'], app)
 
-        # 更新 g 对象的全局变量
+        # 更新全局变量
         app.config['global_data']['contacts_info'] = contacts_info
         app.config['global_data']['messages'] = messages
         app.config['global_data']['initial_values'] = initial_values

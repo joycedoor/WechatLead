@@ -26,7 +26,10 @@ def create_app():
     app.config['global_data'] = {
     'contacts_info': {},
     'messages': {},
-    'initial_values': {}
+    'initial_values': {},
+    'DefaultPlatform': '',
+    'DefaultWechatAgent': '',
+    'DefaultWecomAgent': ''
     }
 
     from routes import configure_routes
@@ -38,7 +41,7 @@ def create_app():
 
     # 这里初始化 initial_values, contacts_info, messages
     contacts_info, messages = query_contacts_and_messages(config.get("DB_PATH"), config.get("MSG_DAYS"), config.get("CONTACT_DAYS"))
-    initial_values = sf.search_contact(contacts_info, sf_init['account_dict'])
+    initial_values = sf.search_contact(contacts_info, sf_init['account_dict'], app)
 
     app.config['global_data']['initial_values'] = initial_values
     app.config['global_data']['contacts_info'] = contacts_info
@@ -49,7 +52,7 @@ def create_app():
 
 if __name__ == '__main__':
     # 设置最大日志文件大小（例如10MB）和备份文件数量（例如5）
-    
+    '''
     max_log_size = 5 * 1024 * 1024  # 10 MB
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)  
@@ -58,7 +61,7 @@ if __name__ == '__main__':
     handler.setLevel(logging.INFO)  # 设置处理器的日志级别
     logger.addHandler(handler)
     sys.stderr = logging.StreamHandler(sys.stderr)
-    
+    '''
     app = create_app()
     threading.Thread(target=open_browser).start()
     app.run(debug=config.get("DEBUG"))

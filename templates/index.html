@@ -96,12 +96,38 @@
           <!-- 表单放在这里 -->
           <form id="configForm">
             <div class="form-group">
-              <label for="msgdaySelect">展示多少天内的聊天记录</label>
-              <input type="text" class="form-control" id="msgdaySelect">
+                <label for="msgdaySelect">展示多少天内的聊天记录</label>
+                <input type="text" class="form-control" id="msgdaySelect">
             </div>
             <div class="form-group">
-              <label for="contactSelect">展示多少天内的联系人</label>
-              <input type="text" class="form-control" id="contactSelect">
+                <label for="contactSelect">展示多少天内的联系人</label>
+                <input type="text" class="form-control" id="contactSelect">
+            </div>
+            <div class="form-group">
+                <label for="contactSelect">默认Social Media Platform</label>
+                <select class="form-control Social_Media_Platform" id="DefaultPlatform">
+                    <option value="">Please select</option>
+                    <option value="WeChat">WeChat</option>
+                    <option value="WeCom">WeCom</option>
+                </select>
+            </div>
+            <div class="form-group WeChat_Agents_List__c_container" style="display:none;">
+                <label for="contactSelect">默认Wechat Agent List</label>
+                <select class="form-control WeChat_Agents_List" id="DefaultWechatAgent">
+                    <option value="">Please select</option>
+                    {% for option in WeChat_Agents_dropdown %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group WeCom_Agents_List__c_container" style="display:none;">
+                <label for="contactSelect">默认Wecom Agent List</label>
+                <select class="form-control WeCom_Agents_List" id="DefaultWecomAgent">
+                    <option value="">Please select</option>
+                    {% for option in WeCom_Agents_dropdown %}
+                        <option value="{{ option }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
             </div>
           </form>
         </div>
@@ -203,24 +229,24 @@
                             </div>
                             <div class="form-group">
                                 <label for="Social_Media_Platform__c">Social Media Platform</label>
-                                <select class="form-control" id="Social_Media_Platform__c">
+                                <select class="form-control Social_Media_Platform" id="Social_Media_Platform__c">
                                     <option value="">Please select</option>
                                     <option value="WeChat">WeChat</option>
                                     <option value="WeCom">WeCom</option>
                                 </select>
                             </div>
-                            <div class="form-group" id="WeChat_Agents_List__c_container" style="display:none;">
+                            <div class="form-group WeChat_Agents_List__c_container" style="display:none;">
                                 <label for="WeChat_Agents_List__c">WeChat Agents List</label>
-                                <select class="form-control" id="WeChat_Agents_List__c">
+                                <select class="form-control WeChat_Agents_List" id="WeChat_Agents_List__c">
                                     <option value="">Please select</option>
                                     {% for option in WeChat_Agents_dropdown %}
                                         <option value="{{ option }}">{{ option }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="form-group" id="WeCom_Agents_List__c_container" style="display:none;">
+                            <div class="form-group WeCom_Agents_List__c_container" style="display:none;">
                                 <label for="WeCom_Agents_List__c">WeCom Agents List</label>
-                                <select class="form-control" id="WeCom_Agents_List__c">
+                                <select class="form-control WeCom_Agents_List" id="WeCom_Agents_List__c">
                                     <option value="">Please select</option>
                                     {% for option in WeCom_Agents_dropdown %}
                                         <option value="{{ option }}">{{ option }}</option>
