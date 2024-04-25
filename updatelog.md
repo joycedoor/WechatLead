@@ -1,3 +1,7 @@
+## Version 1.3.1 - 2024-04-25 16:35:08
+
+新增SalesWechatAgent默认选择
+
 ## Version 1.3.0 - 2024-04-25 15:31:08
 
 MINOR: 新增配置默认Social Media Platform功能
