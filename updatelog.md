@@ -1,3 +1,7 @@
+## Version 1.3.0 - 2024-04-25 15:31:08
+
+MINOR: 新增配置默认Social Media Platform功能
+
 ## Version 1.2.8 - 2024-04-23 09:45:12
 
 日志记录restart
