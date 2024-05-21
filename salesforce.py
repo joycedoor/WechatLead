@@ -144,7 +144,6 @@ class SalesforceManager:
                 initial_values[wxid]['WeCom_Agents_List__c'] = app.config['global_data']['DefaultWecomAgent']
                 initial_values[wxid]['Sales_WeChat_Account__c'] = app.config['global_data']['DefaultSalesWechatAgent']
             
-                
         return initial_values
 
     def refresh_access_token(self):
