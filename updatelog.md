@@ -1,3 +1,7 @@
+## Version 1.3.4 - 2024-06-13 14:11:44
+
+feat: 不需要必填socialmediaplatform
+
 ## Version 1.3.3 - 2024-06-07 22:07:52
 
 更新微信版本
