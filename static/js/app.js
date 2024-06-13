@@ -420,12 +420,13 @@ $(document).ready(function() {
         var weComAgent = $('#WeCom_Agents_List__c').val();
     
         // 检查必填字段是否已填写
-        var isFilled = leadStatus && lastName && socialMediaPlatform;
-        // 检查至少选择了一个Agent list
-        var isAgentSelected = weChatAgent || weComAgent;
+        var isFilled = leadStatus && lastName// && socialMediaPlatform;
+        // // 检查至少选择了一个Agent list
+        // var isAgentSelected = weChatAgent || weComAgent;
     
         // 检查所有条件是否满足
-        if (isFilled && isAgentSelected) {
+        // if (isFilled && isAgentSelected) {
+        if (isFilled) {
             // 所有条件都满足，发送数据
             var userId = $('.contact-item.active').data('user-id');
             var actionData = collectActionData();
