@@ -458,4 +458,18 @@ $(document).ready(function() {
             }
         }
     });
+
+    document.getElementById('search-input').addEventListener('keyup', function() {
+        var searchValue = this.value.toLowerCase();
+        var contactItems = document.querySelectorAll('.contact-item');
+
+        contactItems.forEach(function(item) {
+            var alias = item.textContent.toLowerCase();
+            if (alias.includes(searchValue)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
 });
