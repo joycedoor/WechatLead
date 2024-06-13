@@ -1,3 +1,7 @@
+## Version 1.3.5 - 2024-06-13 15:07:55
+
+feat: 联系人处新增搜索框
+
 ## Version 1.3.4 - 2024-06-13 14:11:44
 
 feat: 不需要必填socialmediaplatform
