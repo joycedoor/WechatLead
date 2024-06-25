@@ -108,7 +108,7 @@ class SalesforceManager:
         #通过wxid 查找
         for wxid, info in contacts_info.items():
             lastname = info['Alias']
-            result = self.sf.query(f"SELECT Lead_ID__c, Status, Student_or_Parent__c, LastName, Account__c, Social_Media_Platform__c, \
+            result = self.sf.query(f"SELECT Lead_ID__c, Status, Student_or_Parent__c, FirstName, LastName, Account__c, Social_Media_Platform__c, \
                                 WeChat_Agents_List__c, WeCom_Agents_List__c, Sales_WeChat_Account__c, \
                                 Group_Name__c, Member_First_Name__c, Member_Last_Name__c, Date_of_Birth__c, Email, Note_and_Description__c \
                                 FROM Lead where RecordTypeId='0123j000001QWVZAA4' AND LastName = '{lastname}'")

@@ -2,6 +2,7 @@ function collectActionData() {
     return {
         'Status': $('#Status').val(),
         'Student_or_Parent__c': $('#Student_or_Parent__c').val(),
+        'FirstName': $('#FirstName').val(),
         'LastName': $('#LastName').val(),
         'Account__c': $('#Account__c').val(),
         'Social_Media_Platform__c': $('#Social_Media_Platform__c').val(),
@@ -323,6 +324,7 @@ $(document).ready(function() {
             var formElementIds = [
                 "Status",
                 "Student_or_Parent__c",
+                'FirstName',
                 "LastName",
                 "Account__c",
                 "Social_Media_Platform__c",
