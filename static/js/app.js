@@ -23,15 +23,19 @@ function extractContent(s) {
     return match ? match[1] : '';
 }
 
+RegExp.escape = function (s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
 function findSchoolAbbreviation(target, schools) {
     var foundSchool = ''; // 默认为空值
     target = target.toLowerCase(); // 将目标文本转换为小写以进行比较
-
+    
     // 遍历学校列表
     schools.forEach(school => {
         var abbreviation = school.abbreviation.toLowerCase(); // 将缩写转换为小写
-        var regex = new RegExp('\\b' + RegExp.escape(abbreviation) + '\\b'); // 创建正则表达式
-
+        var regex = new RegExp('(?:^|[^\\w\\u4e00-\\u9fa5])' + RegExp.escape(abbreviation) + '(?:$|[^\\w\\u4e00-\\u9fa5])');
+        
         // 如果找到匹配的缩写，则设置学校的全称
         if (regex.test(target)) {
             foundSchool = school.schoolName;
