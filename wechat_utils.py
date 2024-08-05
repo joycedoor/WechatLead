@@ -1,4 +1,4 @@
-from pywxdump import VERSION_LIST, read_info, merge_real_time_db, get_core_db
+from pywxdump import WX_OFFS, get_wx_info, merge_real_time_db, get_core_db
 import sys
 from config_manager import config
 from salesforce import *
@@ -6,7 +6,7 @@ import sqlite3
 import datetime
 import os
 def initialize_wechat():
-    wx_info = read_info(VERSION_LIST, True)
+    wx_info = get_wx_info(WX_OFFS, True)
     try:
         if len(wx_info) > 1:
             
@@ -29,7 +29,8 @@ def decrypt_wechat_database(wx_info):
     last_datetime_timestamp = int(last_datetime.timestamp())
 
     db_type = ["MSG", "MicroMsg"]
-    code,dbs = get_core_db(wx_path = wx_info['filePath'], db_type=db_type)
+
+    code,dbs = get_core_db(wx_path = wx_info['wx_dir'], db_types=db_type)
     if not code:
         _ = input("数据库路径信息获取失败，请联系管理员")
     try:
@@ -37,7 +38,7 @@ def decrypt_wechat_database(wx_info):
         if os.path.exists(config.get("DB_PATH")):
             os.remove(config.get("DB_PATH"))
         for d in dbs:
-            merge_real_time_db(wx_info["key"], d, config.get("DB_PATH"), last_datetime_timestamp, 999999999999)
+            merge_real_time_db(wx_info["key"],config.get("DB_PATH"), d)
         print("数据库消息信息解密成功")
     except Exception as e:
         print(e)
