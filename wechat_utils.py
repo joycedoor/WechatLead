@@ -37,8 +37,8 @@ def decrypt_wechat_database(wx_info):
         #如果MSG.db已经存在，先删除掉，避免污染
         if os.path.exists(config.get("DB_PATH")):
             os.remove(config.get("DB_PATH"))
-        for d in dbs:
-            merge_real_time_db(wx_info["key"],config.get("DB_PATH"), d)
+
+        merge_real_time_db(wx_info["key"],config.get("DB_PATH"), dbs)
         print("数据库消息信息解密成功")
     except Exception as e:
         print(e)
