@@ -63,6 +63,8 @@ function filterContacts() {
             $(this).show();
         }
     });
+    var totalContacts = $('#contact-list').children('li:visible').length;
+    $('#total-contact').text('Total Contacts: ' + totalContacts);
 }
 
 // 辅助函数，用于标记未填写的字段
@@ -107,7 +109,6 @@ $(document).ready(function() {
         if (storedData) {
             var schoolData = JSON.parse(storedData);
             schoolData.forEach(function(data) {
-                // 这里应该是您添加新行到界面的代码
                 $('#addedRows').append(
                     '<div class="row school-row">' +
                     '<span class="school-name">' + data.schoolName + '</span> - ' +
@@ -274,7 +275,6 @@ $(document).ready(function() {
         $.get('/refresh_data', function(data) {
             // 解析返回的 JSON 数据并更新页面
             $('#contact-list').empty(); // 清空当前列表
-            console.log(data);
             $.each(data.contacts_info, function(index, contact) {
                 $('#contact-list').append(
                     `<li class="list-group-item contact-item" data-user-id="${index}">
@@ -283,6 +283,9 @@ $(document).ready(function() {
                     </li>`
                 );
             });
+
+            var totalContacts = $('#contact-list').children('li:visible').length;
+            $('#total-contact').text('Total Contacts: ' + totalContacts);
     
             // 隐藏模态框
             updateContactListTags(); 
@@ -323,7 +326,7 @@ $(document).ready(function() {
             var userValues = data;
             $('.contact-item').removeClass('active');
             $(self).addClass('active');
-            $('.chat-messages').empty(); // 使用 . 而不是 # 来选中 class
+            $('.chat-messages').empty(); 
 
             var formElementIds = [
                 "Status",
@@ -404,6 +407,10 @@ $(document).ready(function() {
                         messageElement.addClass(issender ? 'sent-message' : 'received-message');
                         $('.chat-messages').append(messageElement); // 使用 . 而不是 #
                     });
+
+                    // 滚动到最底部
+                    var chatMessages = $('.chat-messages');
+                    chatMessages.scrollTop(chatMessages.prop("scrollHeight"));
                 } else {
                     $('.chat-messages').append($('<div></div>').text('No messages found.'));
                 }

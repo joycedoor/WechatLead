@@ -31,8 +31,7 @@ def decrypt_wechat_database(wx_info):
     db_type = ["MSG", "MicroMsg"]
 
     code,dbs = get_core_db(wx_path = wx_info['wx_dir'], db_types=db_type)
-    print('get_core_db 返回的dbs: ')
-    print(dbs)
+    
     if not code:
         _ = input("数据库路径信息获取失败，请联系管理员")
     try:

@@ -186,9 +186,14 @@
         <div class="col-4">
             <input type="text" id="search-input" class="form-control mb-3" style="margin-top:5px" placeholder="Search contacts...">
             <!-- 联系人筛选框 -->
-            <div class="filter-section">
-                <input type="checkbox" id="hide-lead-checkbox">
-                <label for="hide-lead-checkbox">隐藏已存在Leads的联系人</label>
+            <div class="filter-section" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <input type="checkbox" id="hide-lead-checkbox">
+                    <label for="hide-lead-checkbox">隐藏已存在Leads的联系人</label>
+                </div>
+                <div>
+                    <span id="total-contact">Total Contacts: 0</span>
+                </div>
             </div>
             <!-- 联系人列表 -->
             <ul class="list-group" id="contact-list" style="height: 600px; overflow-y: scroll;">
