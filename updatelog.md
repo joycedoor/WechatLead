@@ -1,3 +1,7 @@
+## Version 1.3.14 - 2024-10-03 11:18:44
+
+new wx version OFFS
+
 ## Version 1.3.13 - 2024-09-11 13:34:48
 
 增加一个total contact count的功能
